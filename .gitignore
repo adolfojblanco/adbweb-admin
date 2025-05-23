@@ -12,6 +12,7 @@ app/**/*.js.map
 # dependencies
 node_modules/
 bower_components/
+front/vscode/
 
 # IDEs and editors
 .idea/
@@ -499,5 +500,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
+./vscode
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,linux,django,python,angular,macos,windows,pycharm
