@@ -1,1 +1,16 @@
 @use 'custom';
+
+$grey : #F8F9FA;
+
+body {
+  background-color: $grey;
+}
+
+.container-login {
+  margin-top: 150px;
+}
+
+.logo-login {
+  width: 300px;
+}
+

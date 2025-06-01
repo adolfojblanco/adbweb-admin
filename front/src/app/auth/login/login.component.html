@@ -1,1 +1,30 @@
-<p>login works!</p>
+<div class="container container-login">
+  <div class="row">
+    <img class="col-md-6 mx-auto logo-login" src="../../../../assets/img/logo.png" alt="logo-adbwebdesign">
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-sm-12 col-md-8 col-lg-5 form-login mx-auto">
+      <div class="card">
+        <div class="card-body">
+          <h1 class="h3 m-3 p-3 text-center">Inicio de Sesión</h1>
+          <form [formGroup]="loginForm" (ngSubmit)="login()" autocomplete="off">
+            <div class="form-floating">
+              <input type="text" class="form-control" formControlName="username" placeholder="name@example.com">
+              <label for="floatingInput">Usuario</label>
+            </div>
+            <div class="form-floating mt-1">
+              <input type="password" class="form-control" formControlName="password" placeholder="Password">
+              <label for="floatingPassword">Contraseña</label>
+            </div>
+
+            <button class="btn btn-primary w-100 my-3 py-2" type="submit">Entrar</button>
+            <p class="mt-5 mb-3 text-body-secondary text-center">
+              © <strong>adbwebdesign</strong>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

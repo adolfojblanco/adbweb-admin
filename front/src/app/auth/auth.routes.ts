@@ -3,12 +3,12 @@ import { LoginComponent } from './login/login.component';
 
 export const authRoutes: Routes = [
   {
-    path: 'auth',
+    path: 'login',
     component: LoginComponent
   },
   {
     path: '**',
-    redirectTo: 'auth'
+    redirectTo: 'login'
   }
 ];
 
