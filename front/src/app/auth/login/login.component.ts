@@ -10,11 +10,11 @@ import { AuthService } from '../../services/auth.service';
   styles: ``
 })
 export class LoginComponent {
+  private authService = inject(AuthService);
+  private fb = inject(FormBuilder);
 
   constructor(private toast: HotToastService) { }
 
-  private authService = inject(AuthService);
-  private fb = inject(FormBuilder);
 
   public loginForm: FormGroup = this.fb.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
@@ -22,7 +22,9 @@ export class LoginComponent {
   });
 
   login() {
-    this.authService.login(this.loginForm.value).subscribe(res => console.log(res));
+    this.authService.login(this.loginForm.value).subscribe(
+      res => this.toast.success('Good Job!')
+    );
   }
 
 
