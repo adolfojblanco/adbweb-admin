@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HotToastService } from '@ngneat/hot-toast';
+import { HotToastService } from '@ngxpert/hot-toast';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -10,8 +11,9 @@ import { HotToastService } from '@ngneat/hot-toast';
 })
 export class LoginComponent {
 
-  constructor(private toast: HotToastService){}
+  constructor(private toast: HotToastService) { }
 
+  private authService = inject(AuthService);
   private fb = inject(FormBuilder);
 
   public loginForm: FormGroup = this.fb.group({
@@ -20,12 +22,7 @@ export class LoginComponent {
   });
 
   login() {
-    console.log(this.loginForm.value);
-    this.toast.show('Hello World!');
-    this.toast.loading('Lazyyy...');
-    this.toast.success('Yeah!!');
-    this.toast.warning('Boo!');
-    this.toast.error('Oh no!');
+    this.authService.login(this.loginForm.value).subscribe(res => console.log(res));
   }
 
 
