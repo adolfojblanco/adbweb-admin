@@ -45,8 +45,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Client(CustomModel):
-    mobile_phone = models.CharField(max_length=9, null=False, blank=False)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    mobile_phone = models.CharField(verbose_name='Móvil', max_length=9, null=False, blank=False)
+    user = models.OneToOneField(User, verbose_name='Usuario', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.fist_name

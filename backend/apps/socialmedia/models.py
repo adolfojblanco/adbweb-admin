@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import CASCADE
+
 from apps.core.models import CustomModel
 
 # Platform Model.
@@ -41,4 +43,14 @@ class StatusChoices(models.TextChoices):
 
 
 class SocialPost(CustomModel):
-    pass
+    title = models.CharField(verbose_name="Titulo", blank=False, null=False)
+    platform = models.ManyToManyField(Platform, verbose_name="Redes Sociales")
+    content_type = models.OneToOneField(ContentType, verbose_name="Tipo de contenido", on_delete=models.CASCADE)
+    copy = models.TextField()
+    cta_text = models.TextField()
+    status = models.CharField("Estado", max_length=20, choices=StatusChoices.choices, default=StatusChoices.DRAFT)
+    scheduled_for = models.DateTimeField(verbose_name="Programado para", null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Publicación'
+        verbose_name_plural = 'Publicaciones'
