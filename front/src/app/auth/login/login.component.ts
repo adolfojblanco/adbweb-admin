@@ -23,7 +23,7 @@ export class LoginComponent {
 
   login() {
     this.authService.login(this.loginForm.value).subscribe(
-      res => this.toast.success('Good Job!')
+      res => this.toast.success('Bienvenido!')
     );
   }
 

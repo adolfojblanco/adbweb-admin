@@ -9,5 +9,4 @@ export interface User {
   is_staff: boolean;
   access_token?: string;
   token?: string;
-
 }

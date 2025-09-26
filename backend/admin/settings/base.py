@@ -41,6 +41,8 @@ TREE_PARTY_APPS = [
 
 LOCAL_APPS = [
     'apps.users',
+    'apps.inventory',
+    'apps.socialmedia'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + TREE_PARTY_APPS + LOCAL_APPS

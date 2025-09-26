@@ -15,9 +15,7 @@ export const adminRoutes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '/admin',
-  },
-
+  }
 ];
 
 export default adminRoutes;
