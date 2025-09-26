@@ -10,11 +10,11 @@
           <h1 class="h3 m-3 p-3 text-center">Inicio de Sesión</h1>
           <form [formGroup]="loginForm" (ngSubmit)="login()" autocomplete="off">
             <div class="form-floating">
-              <input type="text" class="form-control" formControlName="username" placeholder="name@example.com">
+              <input type="text" class="form-control form-control-sm" formControlName="username" placeholder="name@example.com">
               <label for="floatingInput">Usuario</label>
             </div>
             <div class="form-floating mt-1">
-              <input type="password" class="form-control" formControlName="password" placeholder="Password">
+              <input type="password" class="form-control form-control-sm" formControlName="password" placeholder="Password">
               <label for="floatingPassword">Contraseña</label>
             </div>
 
