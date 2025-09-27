@@ -15,6 +15,7 @@ export const adminRoutes: Routes = [
   },
   {
     path: '**',
+    redirectTo: ''
   }
 ];
 
