@@ -5,8 +5,14 @@ name = "pypi"
 
 [packages]
 django = "*"
+djangorestframework = "*"
+drf-yasg = "*"
+djangorestframework-simplejwt = "*"
+pillow = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.12"
+clear
