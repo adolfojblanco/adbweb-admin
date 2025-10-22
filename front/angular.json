@@ -21,15 +21,18 @@
           "options": {
             "stylePreprocessorOptions": {
               "sass": {
-                "silenceDeprecations": ["import", "mixed-decls", "color-functions", "global-builtin"]
+                "silenceDeprecations": [
+                  "import",
+                  "mixed-decls",
+                  "color-functions",
+                  "global-builtin"
+                ]
               }
             },
             "outputPath": "dist/front",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -38,9 +41,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -81,12 +82,7 @@
             },
             "development": {
               "buildTarget": "front:build:development",
-              "host": "0.0.0.0",
-              "port": 4200,
-              "allowedHosts": [
-                "server.adbwebdesign.com",
-                "coder.adbwebdesign.com"
-              ]
+              "port": 4200
             }
           },
           "defaultConfiguration": "development"
@@ -97,10 +93,7 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -113,7 +106,7 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": ["node_modules/bootstrap/dist/js/bootstrap.min.js"]
           }
         }
       }

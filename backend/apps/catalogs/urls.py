@@ -1,8 +1,11 @@
 from rest_framework.routers import DefaultRouter
 
-from views import TaxViewSet
+from .views import TaxViewSet, CategoryViewSet, ProductViewSet
 
 router = DefaultRouter()
+
 router.register(r"taxes", TaxViewSet, basename="tax")
+router.register(r"categories", CategoryViewSet, basename="category")
+router.register(r"products", ProductViewSet, basename="product")
 
 urlpatterns = router.urls

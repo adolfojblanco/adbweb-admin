@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
-from apps.catalogs.models import Category, Tax
-from .serializers import CategorySerializer, TaxSerializer
+from apps.catalogs.models import Category, Tax, Product
+from .serializers import CategorySerializer, TaxSerializer, ProductSerializer
 from ..accounts.permissions import ReadOnlyOrAdminSeller
 
 
@@ -18,3 +18,10 @@ class TaxViewSet(viewsets.ModelViewSet):
     queryset = Tax.objects.all().order_by("name")
     serializer_class = TaxSerializer
     permission_classes = [ReadOnlyOrAdminSeller]
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all().order_by("name")
+    serializer_class = ProductSerializer
+    search_fields = ["name"]
+    ordering_fields = ["name"]

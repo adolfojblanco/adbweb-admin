@@ -8,10 +8,12 @@ export const adminRoutes: Routes = [
   {
     path: '',
     component: AdminComponent,
-  },
-  {
-    path: 'inventory',
-    component: InventoryComponent
+    children: [
+      {
+        path: 'inventory',
+        loadChildren: () => import('./inventory/inventory.routes')
+      }
+    ]
   },
   {
     path: '**',
