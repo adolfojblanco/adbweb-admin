@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class CategoriesService {
-  private readonly urlEndPoint: string = `${environment.apiUrl}/categories/`;
+  private readonly urlEndPoint: string = `${environment.apiUrl}/catalog/categories/`;
   private http = inject(HttpClient);
 
 
