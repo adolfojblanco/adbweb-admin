@@ -23,6 +23,11 @@ export class AuthService {
     );
   }
 
+  /** Load token from localstorage */
+  getToken() {
+    const token: string = localStorage.getItem('token') || '';
+  }
+
   logout() {
     localStorage.clear();
     this.router.navigate(['/auth/login'])
