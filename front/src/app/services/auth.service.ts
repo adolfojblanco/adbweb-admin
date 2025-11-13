@@ -1,15 +1,16 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+
 import { Observable, tap } from 'rxjs';
 import { User } from '../models/user';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly urlEndPoint: string = `${environment.apiUrl}/auth`;
+  private readonly urlEndPoint: string = `${environment.apiAuth}/auth`;
   private http = inject(HttpClient);
   private router = inject(Router);
   constructor() { }
@@ -26,6 +27,11 @@ export class AuthService {
   /** Load token from localstorage */
   getToken() {
     const token: string = localStorage.getItem('token') || '';
+    if (token != '') {
+      return token;
+    } else {
+      return null;
+    }
   }
 
   logout() {
