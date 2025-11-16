@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Category } from './../../../models/category';
+import { Component, inject, signal } from '@angular/core';
+import { CategoriesService } from '../../../services/categories.service';
 
 @Component({
   selector: 'app-categories',
@@ -7,5 +9,8 @@ import { Component } from '@angular/core';
   styles: ``
 })
 export class CategoriesComponent {
+
+  private catService = inject(CategoriesService);
+  public categories = signal<Category[]>([])
 
 }

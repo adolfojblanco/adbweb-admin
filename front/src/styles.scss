@@ -1,7 +1,7 @@
-@use 'custom';
-@use '@ngxpert/hot-toast/styles';
+@use "custom";
+@use "@ngxpert/hot-toast/styles";
 
-$grey : #F8F9FA;
+$grey: #f8f9fa;
 
 body {
   background-color: $grey;
@@ -15,5 +15,8 @@ body {
   width: 300px;
 }
 
+.btn {
+  color: white;
+}
 
 /* Importing @ngxpert/hot-toast SCSS file. */

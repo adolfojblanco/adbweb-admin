@@ -1,1 +1,31 @@
-<p>categories works!</p>
+<h3>Listado de categorias</h3>
+<hr>
+<div class="card">
+  <table class="table table-responsive">
+    <thead class="table-primary bg-primary">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @if (!categories()) {
+      @for (category of categories(); track category.id) {
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-danger btn-sm">Editar</button>
+            <button type="button" class="btn btn-secondary btn-sm">Desactivar</button>
+          </div>
+        </td>
+      </tr>
+      }
+      }
+    </tbody>
+  </table>
+</div>
