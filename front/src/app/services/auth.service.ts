@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import { Observable, tap } from 'rxjs';
+import { catchError, Observable, pipe, tap } from 'rxjs';
 import { User } from '../models/user';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -18,6 +18,7 @@ export class AuthService {
   login(user: User): Observable<User> {
     return this.http.post<User>(`${this.urlEndPoint}/token/`, user).pipe(
       tap((res: any) => {
+        console.log('res', res);
         localStorage.setItem('token', res.access);
         this.router.navigate(['/admin']);
       })
