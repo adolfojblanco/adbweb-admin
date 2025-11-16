@@ -18,9 +18,7 @@ export class InventoryComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.categoryServices.loadCategories().subscribe(res => {
-      console.log(res);
-    })
+
   }
 
 

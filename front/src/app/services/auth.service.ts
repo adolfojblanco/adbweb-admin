@@ -31,8 +31,14 @@ export class AuthService {
     if (token != '') {
       return token;
     } else {
+      this.logout();
       return null;
     }
+  }
+
+  /** Get User from token */
+  getAuthUser() {
+    return this.http.get<string>(`${this.urlEndPoint}/me`);
   }
 
   logout() {

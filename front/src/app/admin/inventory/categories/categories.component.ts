@@ -1,5 +1,5 @@
 import { Category } from './../../../models/category';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { CategoriesService } from '../../../services/categories.service';
 
 @Component({
@@ -8,9 +8,17 @@ import { CategoriesService } from '../../../services/categories.service';
   templateUrl: './categories.component.html',
   styles: ``
 })
-export class CategoriesComponent {
-
+export class CategoriesComponent implements OnInit {
   private catService = inject(CategoriesService);
-  public categories = signal<Category[]>([])
+  public categories = signal<Category[]>([]);
+
+  ngOnInit(): void {
+    this.loadcategories();
+  }
+
+  loadcategories() {
+    this.catService.loadCategories().subscribe(res => { this.categories.set(res) });
+    console.log('Me ejecute');
+  }
 
 }

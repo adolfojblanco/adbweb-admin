@@ -11,7 +11,6 @@ import { AuthService } from '../../services/auth.service';
 })
 export class LoginComponent {
   private authService = inject(AuthService);
-  private toas = inject(HotToastService);
   private fb = inject(FormBuilder);
   private hasError = signal(false);
 
@@ -29,7 +28,9 @@ export class LoginComponent {
       this.toast.error("Verifica el formulario, datos invalidos.")
       return;
     }
-    const { username = '', password = '' } = this.loginForm.value
+    this.authService.login(this.loginForm.value).subscribe(res => {
+      this.toast.success('Yeah!!');
+    });
   }
 
 
