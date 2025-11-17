@@ -1,17 +1,17 @@
 /* Custom colors */
 $red: #f44336;
 $green: #26a69a;
-$blue: #3A5BA6;
+$blue: #3a5ba6;
 $dark: #37474f;
-$yellow: #FDD718;
+$yellow: #fdd718;
 $light: #fff;
 
 /** Asignar paleta de colores a boostrap **/
 $primary: $blue;
 $success: $green;
-$warning: $yellow;    
-$danger: $red;              
+$warning: $yellow;
+$danger: $red;
 $dark: $dark;
 
-
 @import "../node_modules/bootstrap/scss/bootstrap.scss";
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
