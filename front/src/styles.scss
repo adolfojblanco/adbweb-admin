@@ -19,4 +19,16 @@ body {
   color: white;
 }
 
-/* Importing @ngxpert/hot-toast SCSS file. */
+.modal {
+  /* Hide visually and from screen readers when not visible */
+  display: none;
+}
+
+.modal.show {
+  display: block;
+}
+
+/* Hide from screen readers when not visible */
+.modal:not(.show) {
+  visibility: hidden;
+}

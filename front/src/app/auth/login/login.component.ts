@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { AuthService } from '../../services/auth.service';
@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
+  private hasError = signal(false);
 
   constructor(private toast: HotToastService) { }
 
@@ -22,9 +23,14 @@ export class LoginComponent {
   });
 
   login() {
-    this.authService.login(this.loginForm.value).subscribe(
-      res => this.toast.success('Bienvenido!')
-    );
+    if (this.loginForm.invalid) {
+      this.hasError.set(true);
+      this.toast.error("Verifica el formulario, datos invalidos.")
+      return;
+    }
+    this.authService.login(this.loginForm.value).subscribe(res => {
+      this.toast.success('Yeah!!');
+    });
   }
 
 
