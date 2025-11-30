@@ -21,7 +21,7 @@
       <tr>
         <th scope="row">{{category.id}}</th>
         <td>{{category.name}}</td>
-        <td>Otto</td>
+        <td>{{category.active}}</td>
         <td>
           <div class="d-flex gap-2">
             <button type="button" class="btn btn-danger btn-sm" (click)="editCategory(category)">Editar</button>
@@ -52,8 +52,9 @@
             <input type="text" id="category" class="form-control" formControlName="name">
           </div>
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked">
-            <label class="form-check-label" formControlName="active">Activada</label>
+            <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked"
+              formControlName="active">
+            <label class="form-check-label">Activada</label>
           </div>
         </form>
       </div>

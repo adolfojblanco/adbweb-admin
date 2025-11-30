@@ -42,7 +42,6 @@ export class CategoriesComponent implements OnInit {
 
   editCategory(category: Category) {
     this.openModal('Edición de categoria');
-    console.log(category);
     this.categoryForm.reset(category)
   }
 
