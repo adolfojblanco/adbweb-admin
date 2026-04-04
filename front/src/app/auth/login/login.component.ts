@@ -2,10 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { AuthService } from '../../services/auth.service';
+import { MaterialModule } from '../../admin/shared/material/material.module';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, MaterialModule],
   templateUrl: './login.component.html',
   styles: ``
 })
@@ -29,7 +30,7 @@ export class LoginComponent {
       return;
     }
     this.authService.login(this.loginForm.value).subscribe(res => {
-      this.toast.success('Yeah!!');
+      this.toast.success(`Bienvenido, ${this.loginForm.value['username']}`);
     });
   }
 
