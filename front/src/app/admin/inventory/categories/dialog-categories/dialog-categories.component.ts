@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MaterialModule } from '../../../shared/material/material.module';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-dialog-categories',

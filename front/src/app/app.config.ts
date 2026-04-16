@@ -17,6 +17,6 @@ export const appConfig: ApplicationConfig = {
     provideHotToastConfig({
       autoClose: true,
       position: 'top-right'
-    })
+    }), provideHotToastConfig()
   ]
 };

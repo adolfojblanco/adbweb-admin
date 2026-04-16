@@ -1,12 +1,21 @@
+/* Angular material */
 @use "@angular/material" as mat;
+@use "@ngxpert/hot-toast/styles";
+
+/* Custom */
 @import "custom";
 
+/** Boostrap **/
+@import "bootstrap/scss/bootstrap";
+@import "bootstrap-icons/font/bootstrap-icons.scss";
+
 html {
+  height: 100%;
   @include mat.theme(
     (
       color: (
         primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
+        tertiary: mat.$azure-palette,
       ),
       typography: Roboto,
       density: 0,
@@ -24,17 +33,14 @@ html {
   );
 }
 
+
 body {
   color-scheme: light;
-
   background-color: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
+  height: 100%;
 }
-
 .container-login {
   margin-top: 150px;
 }

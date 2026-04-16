@@ -1,17 +1,19 @@
-/* Custom colors */
+/* _custom.scss */
+
+/* 1. Definición de variables */
 $red: #f44336;
 $green: #26a69a;
 $blue: #3a5ba6;
-$dark: #37474f;
+$dark-color: #37474f; // Cambié el nombre a $dark-color para evitar conflicto con Bootstrap
 $yellow: #fdd718;
 $light: #fff;
 
-/** Asignar paleta de colores a boostrap **/
+
+/* 2. Sobrescribir variables de Bootstrap */
 $primary: $blue;
 $success: $green;
 $warning: $yellow;
 $danger: $red;
-$dark: $dark;
+$dark: $dark-color;
 
-@import "../node_modules/bootstrap/scss/bootstrap.scss";
-@import "../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
+

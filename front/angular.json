@@ -23,7 +23,6 @@
               "sass": {
                 "silenceDeprecations": [
                   "import",
-                  "mixed-decls",
                   "color-functions",
                   "global-builtin"
                 ]
@@ -41,10 +40,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "node_modules/@ngxpert/hot-toast/src/styles/styles.css",
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -105,8 +101,8 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"],
-            "scripts": [""]
+            "styles": [],
+            "scripts": []
           }
         }
       }
