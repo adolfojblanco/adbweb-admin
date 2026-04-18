@@ -13,7 +13,6 @@ import { Category } from '../../../../models/category';
   styles: ``,
 })
 export class DialogCategoriesComponent implements OnInit {
-  private dialog = inject(MatDialog);
   private categoryService = inject(CategoriesService);
   private fb = inject(FormBuilder);
   private data = inject(MAT_DIALOG_DATA)
