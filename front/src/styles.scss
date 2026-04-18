@@ -31,8 +31,12 @@ html {
       border-radius: 5px,
     )
   );
+  @include mat.table-overrides(
+    (
+      background-color: #FFF,
+    )
+  );
 }
-
 
 body {
   color-scheme: light;

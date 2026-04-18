@@ -43,5 +43,18 @@ export class CategoriesComponent implements OnInit {
     });
   }
 
+  /** Edit a category */
+  editCategory(category: Category) {
+    const dialogRef = this.dialog.open(DialogCategoriesComponent, {
+      width: '450px',
+      data: category
+    })
+    dialogRef.afterClosed().subscribe(category => {
+      if (category) {
+        this.categories.update(categories => categories.map(c => c.id === category.id ? category : c))
+      }
+    })
+  }
+
 
 }

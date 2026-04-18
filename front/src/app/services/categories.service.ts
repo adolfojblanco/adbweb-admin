@@ -9,16 +9,20 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CategoriesService {
-  private readonly urlEndPoint: string = `${environment.apiUrl}/categories/`;
+  private readonly urlEndPoint: string = `${environment.apiUrl}/categories`;
   private http = inject(HttpClient);
 
 
   loadCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.urlEndPoint}`);
+    return this.http.get<Category[]>(`${this.urlEndPoint}/`);
   }
 
   editCategory(category: Category) {
-    return this.http.post<Category>(`${this.urlEndPoint}`, category)
+    return this.http.put<Category>(`${this.urlEndPoint}/${category.id}/`, category);
+  }
+
+  newCategory() {
+
   }
 
 }

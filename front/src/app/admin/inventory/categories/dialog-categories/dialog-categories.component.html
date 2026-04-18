@@ -2,11 +2,12 @@
 <mat-divider></mat-divider>
 <div class="col-12">
   <mat-dialog-content class="mat-typography">
-    <form autocomplete="off" class="row" [formGroup]="categoryForm"]>
+    <form autocomplete="off" class="row" [formGroup]="categoryForm" ]>
       <p>
         <mat-form-field class="full-width" appearance="fill">
           <mat-label>Nombre</mat-label>
           <input type="text" matInput placeholder="Categoria" formControlName="name" class="full-width" required>
+          <mat-hint>El campo es requerido</mat-hint>
         </mat-form-field>
       </p>
 
@@ -20,6 +21,6 @@
 
   <mat-dialog-actions align="end">
     <button matButton="elevated" mat-dialog-close>Cancel</button>
-    <button matButton="filled" color="primary" (click)="submit()">Guardar</button>
+    <button matButton="filled" color="primary" (click)="submit()" [disabled]="categoryForm.invalid">Guardar</button>
   </mat-dialog-actions>
 </div>

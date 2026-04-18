@@ -1,7 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MaterialModule } from '../../../shared/material/material.module';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { CategoriesService } from '../../../../services/categories.service';
+import { Category } from '../../../../models/category';
 
 @Component({
   selector: 'app-dialog-categories',
@@ -9,25 +12,38 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
   templateUrl: './dialog-categories.component.html',
   styles: ``,
 })
-export class DialogCategoriesComponent {
+export class DialogCategoriesComponent implements OnInit {
+  private dialog = inject(MatDialog);
+  private categoryService = inject(CategoriesService);
   private fb = inject(FormBuilder);
-  public toast = inject(HotToastService);
-  constructor() {
+  private data = inject(MAT_DIALOG_DATA)
+  private toast = inject(HotToastService);
 
+  constructor(public dialogRef: MatDialogRef<DialogCategoriesComponent>) { };
+  ngOnInit(): void {
+    if (this.data) {
+      this.categoryForm.reset(this.data)
+    }
   }
 
   public categoryForm: FormGroup = this.fb.group({
+    id: [null],
     name: ['', [Validators.required, Validators.minLength(3)]],
     active: [true]
   })
 
   submit() {
-    if (this.categoryForm.invalid) {
-      this.toast.error('Todos los campos son obligatorios');
-      return;
-    }
+    if (this.categoryForm.invalid) return;
+    const category: Category = { ...this.categoryForm.value };
 
-    console.log(this.categoryForm.value);
+    if (category.id) {
+      this.categoryService.editCategory(category).subscribe((res) => {
+        this.toast.success(`${category.name}, actualizada correctamente`)
+        this.dialogRef.close(res)
+      });
+    } else {
+      console.log('Nuevo');
+    }
 
   }
 }
