@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { MaterialModule } from '../../../shared/material/material.module';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CategoriesService } from '../../../../services/categories.service';
 import { Category } from '../../../../models/category';
 

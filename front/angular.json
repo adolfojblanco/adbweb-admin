@@ -40,7 +40,10 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "node_modules/animate.css/source/animate.css",
+              "src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {

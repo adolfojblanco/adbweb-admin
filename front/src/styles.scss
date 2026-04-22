@@ -11,6 +11,7 @@
 
 html {
   height: 100%;
+
   @include mat.theme(
     (
       color: (
@@ -21,21 +22,44 @@ html {
       density: 0,
     )
   );
+
+  // Configuración global de botones
   @include mat.button-theme(
     (
       border-radius: 5px,
     )
   );
+
   @include mat.dialog-theme(
     (
       border-radius: 5px,
     )
   );
+
   @include mat.table-overrides(
     (
-      background-color: #FFF,
+      background-color: #fff,
     )
   );
+  // --- CLASES INDEPENDIENTES ---
+  .btn-danger {
+    @include mat.button-overrides(
+      (
+        filled-container-color: $red,
+        filled-label-text-color: $light,
+        // El icono heredará el color blanco del texto automáticamente
+      )
+    );
+  }
+
+  .btn-warning {
+    @include mat.button-overrides(
+      (
+        filled-container-color: $yellow,
+        filled-label-text-color: $dark-color,
+      )
+    );
+  }
 }
 
 body {

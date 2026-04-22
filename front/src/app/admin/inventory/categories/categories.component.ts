@@ -1,7 +1,6 @@
 import { Category } from './../../../models/category';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CategoriesService } from '../../../services/categories.service';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MaterialModule } from '../../shared/material/material.module';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogCategoriesComponent } from './dialog-categories/dialog-categories.component';
@@ -16,8 +15,6 @@ import { DialogCategoriesComponent } from './dialog-categories/dialog-categories
 export class CategoriesComponent implements OnInit {
   private dialog = inject(MatDialog);
   private catService = inject(CategoriesService);
-
-
   public categories = signal<Category[]>([]);
   public displayedColumns: string[] = ['name', 'active', 'actions'];
 

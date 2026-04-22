@@ -1,1 +1,59 @@
-<p>products works!</p>
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <h3 class="card-title">Productos</h3>
+      <button type="button" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-circle-fill"></i> Nueva
+      </button>
+    </div>
+    <hr>
+    <table mat-table [dataSource]="products()">
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="sku">
+        <th mat-header-cell *matHeaderCellDef> <strong>SKU. </strong></th>
+        <td mat-cell *matCellDef="let element"> {{element.sku}} </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> <strong>Producto</strong> </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef> <strong>Categoria</strong> </th>
+        <td mat-cell *matCellDef="let element"> {{element.category.name}} </td>
+      </ng-container>
+
+      <!-- active Column -->
+      <ng-container matColumnDef="active">
+        <th mat-header-cell *matHeaderCellDef> <strong>Activo</strong> </th>
+        <td mat-cell *matCellDef="let element">
+          @if (element.active) {
+          <mat-icon class="text-success">done</mat-icon>
+          }
+          @if (!element.active) {
+          <mat-icon class="text-danger">block</mat-icon>
+          }
+        </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="text-center"> <strong>Acciones</strong> </th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          <a matButton="filled" class="border-radius me-1" (click)="editProduct(element)">Edición<mat-icon>edit</mat-icon></a>
+          <a matButton="filled" class="btn-danger border-radius">Detalle<mat-icon>info</mat-icon></a>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+    </mat-paginator>
+  </div>
+</div>

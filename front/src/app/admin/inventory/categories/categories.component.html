@@ -1,13 +1,13 @@
-<div class="card">
+<div class="card animate__animated animate__fadeIn">
   <div class="card-body">
     <div class="d-flex">
-      <h3 class="flex-grow-1 ">Listado de categorias</h3>
+      <h3 class="card-title flex-grow-1">Listado de categorias</h3>
       <button type="button" (click)="newCategory()" class="btn btn-primary btn-sm">
         <i class="bi bi-plus-circle-fill"></i> Nueva
       </button>
     </div>
     <hr>
-    <mat-card class="mx-auto animate__animated animate__fadeIn">
+    <mat-card class="mx-auto">
       <div class="mat-elevation-z8">
         <table mat-table [dataSource]="categories()">
 
@@ -40,7 +40,8 @@
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef class="text-center"> <strong>Acciones</strong> </th>
             <td mat-cell *matCellDef="let element" class="text-center">
-              <a matButton="filled" class="border-radius" (click)="editCategory(element)">Detalle<mat-icon>info</mat-icon></a>
+              <a matButton="filled" class="border-radius"
+                (click)="editCategory(element)">Detalle<mat-icon>info</mat-icon></a>
             </td>
           </ng-container>
 
