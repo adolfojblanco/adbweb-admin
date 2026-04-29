@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 
 from apps.core.models import TimeStampedModel
 
@@ -8,11 +9,10 @@ from apps.core.models import TimeStampedModel
 # Tax Model
 class Tax(TimeStampedModel):
     name = models.CharField(max_length=100)
-    rate = models.DecimalField(decimal_places=2, max_digits=5)
-    active = models.BooleanField(default=True)
+    percentage = models.DecimalField(decimal_places=2, max_digits=5)
 
     def __str__(self):
-        return f"{self.name} ({self.rate}%)"
+        return f"{self.name} ({self.percentage}%)"
 
     class Meta:
         verbose_name = "Impuesto"
@@ -21,14 +21,15 @@ class Tax(TimeStampedModel):
 
 # Category Model
 class Category(TimeStampedModel):
-    name = models.CharField(max_length=100)
-    active = models.BooleanField(default=True)
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=120, unique=True, blank=True)
 
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
         self.name = self.name.title()
+        self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
     class Meta:
@@ -39,24 +40,30 @@ class Category(TimeStampedModel):
 
 # Product Model
 class Product(TimeStampedModel):
-    sku = models.CharField(max_length=32, unique=True)
+    sku = models.CharField(max_length=32, unique=True, blank=True)
     name = models.CharField(max_length=160)
     description = models.TextField(blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products")
-    unit_price = models.DecimalField(max_digits=12, decimal_places=2)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="products")
+    sale_price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    cost_price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     tax = models.ForeignKey(Tax, on_delete=models.PROTECT, related_name="products")
-    active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        is_new = self.pk is None
-        super().save(*args, **kwargs)
+        self.slug = slugify(self.name)
+        self.name = self.name.title()
+
+        # Si no tiene id es nuevo
+        if not self.pk:
+            super().save(*args, **kwargs)
 
         # Si no tiene SKU
-        if is_new and not self.sku:
+        if not self.sku:
             prefix = self.name.strip()[:3].upper()  # Primeras 3 letras.
-            sku = f"{prefix}-{self.id:03d}"  # Formato CAM-001
-            self.sku = sku
+            self.sku = f"{prefix}-{self.id:03d}"  # Formato CAM-001
             self.save(update_fields=['sku'])
+        else:
+            super().save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Productos"

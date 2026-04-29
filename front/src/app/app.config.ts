@@ -14,9 +14,6 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withFetch()),
-    provideHotToastConfig({
-      autoClose: true,
-      position: 'top-right'
-    }), provideHotToastConfig()
+    provideHotToastConfig({ position: 'top-right' }),
   ]
 };

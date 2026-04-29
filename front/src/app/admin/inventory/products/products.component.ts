@@ -1,3 +1,4 @@
+import { CategoriesService } from './../../../services/categories.service';
 
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ProductsService } from '../../../services/products.service';
@@ -5,6 +6,7 @@ import { Product } from '../../../models/product';
 import { MaterialModule } from '../../shared/material/material.module';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogProductComponent } from './dialog-product/dialog-product.component';
+import { Category } from '../../../models/category';
 
 @Component({
   selector: 'app-products',
@@ -26,14 +28,22 @@ export class ProductsComponent implements OnInit {
     this.productService.loadProducts().subscribe(
       res => {
         this.products.set(res);
-        console.log(res);
       }
     )
   }
 
+  newProduct() {
+    const dialogRef = this.dialog.open(DialogProductComponent, {
+      width: '600px'
+    })
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(result);
+    })
+  }
+
   editProduct(product: Product): void {
     const dialogRef = this.dialog.open(DialogProductComponent, {
-      width: '450px',
+      width: '600px',
       data: product
     });
     dialogRef.afterClosed().subscribe((result) => {

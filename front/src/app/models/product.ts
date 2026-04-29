@@ -1,4 +1,5 @@
 import { Category } from "./category";
+import { Tax } from "./tax";
 
 export interface Product {
   id?: number;
@@ -6,7 +7,9 @@ export interface Product {
   name: string;
   description: string
   active: boolean;
-  unit_price: number;
-  tax: number;
+  slug?: string
+  sale_price: number;
+  cost_price: number;
+  tax: Tax;
   category: Category
 }

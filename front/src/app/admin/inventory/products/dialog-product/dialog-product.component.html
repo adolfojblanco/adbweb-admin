@@ -6,22 +6,47 @@
       <p>
         <mat-form-field class="full-width" appearance="fill">
           <mat-label>Nombre</mat-label>
-          <input type="text" matInput placeholder="Categoria" formControlName="name" class="full-width" required>
-          <mat-hint>El campo es requerido</mat-hint>
-        </mat-form-field>
-      </p>
-      <p>
-        <mat-form-field class="full-width" appearance="fill">
-          <mat-label>Categoria</mat-label>
-          <input type="text" matInput placeholder="Categoria" formControlName="name" class="full-width" required>
+          <input type="text" matInput placeholder="Nombre del Producto" formControlName="name" class="full-width"
+            required>
           <mat-hint>El campo es requerido</mat-hint>
         </mat-form-field>
       </p>
 
       <p>
+        <mat-form-field class="full-width">
+          <mat-label>
+            Impuestos --
+          </mat-label>
+          <mat-select matNativeControl required formControlName="tax">
+            @for (tax of taxes(); track tax.id) {
+            <mat-option [value]="tax.id">{{tax.name}} - {{tax.percentage}}%</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </p>
+
+      <p>
+        <mat-form-field class="full-width">
+          <mat-label>
+            Categoria
+          </mat-label>
+          <mat-select matNativeControl required formControlName="category">
+            @for (category of categories(); track category.id) {
+            <mat-option [value]="category.id">{{category.name}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </p>
+
+      <p class="inline-form-fields">
         <mat-form-field class="full-width" appearance="fill">
-          <mat-label>Precio</mat-label>
-          <input type="text" matInput placeholder="Categoria" formControlName="unit_price" class="full-width" required>
+          <mat-label>Precio Venta</mat-label>
+          <input type="number" matInput placeholder="Precio de venta" formControlName="sale_price" required>
+          <mat-hint>El campo es requerido</mat-hint>
+        </mat-form-field>
+        <mat-form-field class="full-width" appearance="fill">
+          <mat-label>Precio Coste</mat-label>
+          <input type="number" matInput placeholder="Precio de coste" formControlName="cost_price" required>
           <mat-hint>El campo es requerido</mat-hint>
         </mat-form-field>
       </p>

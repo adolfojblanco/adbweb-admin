@@ -10,3 +10,9 @@ export interface User {
   access_token?: string;
   token?: string;
 }
+
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  SELLER = 'SELLER',
+  CLIENT = 'CLIENT'
+}

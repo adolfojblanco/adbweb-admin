@@ -29,10 +29,27 @@ export class LoginComponent {
       this.toast.error("Verifica el formulario, datos invalidos.")
       return;
     }
-    this.authService.login(this.loginForm.value).subscribe(res => {
-      this.toast.success(`Bienvenido, ${this.loginForm.value['username']}`);
+    this.authService.login(this.loginForm.value).subscribe({
+      next: (res) => {
+        // 1. Éxito: El usuario entró
+        const username = this.loginForm.get('username')?.value;
+        this.toast.success(`Bienvenido, ${username}`);
+        console.log('Login exitoso:', res);
+
+        // Aquí normalmente navegarías al dashboard
+        // this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        // 2. Error: Manejo de fallos (401, 403, 500, etc.
+
+        // Si Django DRF devuelve un 401, el error suele venir en err.error
+        const errorMsg = err.status === 401
+          ? 'Credenciales inválidas'
+          : 'Error de conexión con el servidor';
+
+        this.toast.error(errorMsg);
+      },
+
     });
   }
-
-
 }
