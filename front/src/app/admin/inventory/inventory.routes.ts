@@ -2,6 +2,7 @@ import { Routes } from "@angular/router";
 import { InventoryComponent } from "./inventory.component";
 import { ProductsComponent } from "./products/products.component";
 import { CategoriesComponent } from "./categories/categories.component";
+import { TaxesComponent } from "./taxes/taxes.component";
 
 
 
@@ -17,6 +18,10 @@ export const inventoryRoutes: Routes = [
       {
         path: 'categories',
         component: CategoriesComponent
+      },
+      {
+        path: 'taxes',
+        component: TaxesComponent
       }
     ]
   },

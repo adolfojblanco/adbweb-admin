@@ -34,7 +34,6 @@ export class DialogProductComponent implements OnInit {
     this.loadCategories();
     this.loadTax();
     if (this.data) {
-      console.log(this.data.category.id);
       this.productForm.reset(this.data);
       this.productForm.get('category')?.setValue(this.data.category.id);
       this.productForm.get('tax')?.setValue(this.data.tax.id);
@@ -61,8 +60,8 @@ export class DialogProductComponent implements OnInit {
     description: ['', Validators.required],
     sale_price: ['', [Validators.required, Validators.min(0)]],
     cost_price: ['', [Validators.required, Validators.min(0)]],
-    category_id: ['', [Validators.required]],
-    tax_id: ['', [Validators.required]],
+    category: ['', [Validators.required]],
+    tax: ['', [Validators.required]],
     active: [true]
   })
 
@@ -71,14 +70,17 @@ export class DialogProductComponent implements OnInit {
     const product = this.productForm.value;
     if (!product.id) {
       this.productService.newProduct(product).subscribe((res) => {
-        this.dialogRef.close(res),
-        this.toast.success(`Registrado correctamente`)
+        this.toast.success(`Registrado correctamente`),
+          this.dialogRef.close(res)
       })
 
+    } else {
+      console.log(product);
+      this.productService.editProduct(product).subscribe((res) => {
+        this.dialogRef.close(res)
+        this.toast.success(`Actualizado correctamente`)
+      })
     }
-
-    
-    console.log(product);
   }
 
 

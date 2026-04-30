@@ -41,7 +41,10 @@ export class DialogCategoriesComponent implements OnInit {
         this.dialogRef.close(res)
       });
     } else {
-      console.log('Nuevo');
+      this.categoryService.newCategory(category).subscribe((res) => {
+        this.toast.success(`${category.name}, resgistrada correctamente`);
+        this.dialogRef.close(res)
+      })
     }
 
   }

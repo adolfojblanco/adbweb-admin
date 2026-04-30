@@ -19,11 +19,12 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == self.role.ADMIN
+        return self.role == self.Role.ADMIN
 
     @property
     def is_seller(self):
-        return self.role == self.role.SELLER
+        return self.role == self.Role.SELLER
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.get_role_display()})"
+        full_name = f"{self.first_name} {self.last_name}"
+        return f"{full_name or self.username} ({self.get_role_display()})"

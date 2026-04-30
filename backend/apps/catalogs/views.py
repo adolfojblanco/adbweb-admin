@@ -12,12 +12,14 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     search_fields = ["name"]
     ordering_fields = ["name"]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
 
 class TaxViewSet(viewsets.ModelViewSet):
     queryset = Tax.objects.all().order_by("name")
     serializer_class = TaxSerializer
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
 

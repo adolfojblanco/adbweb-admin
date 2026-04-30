@@ -74,10 +74,10 @@ TEMPLATES = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication', # Añade esto para probar desde el navegador
+        'rest_framework.authentication.SessionAuthentication', # Útil para ver Swagger logueado
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated', # Cambia temporalmente a esto
+        'rest_framework.permissions.AllowAny', # Permitimos el acceso general
     ),
 }
 

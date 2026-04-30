@@ -35,7 +35,7 @@ export class CategoriesComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.loadCategories();
+        this.categories.update(prev => [...prev, result])
       }
     });
   }

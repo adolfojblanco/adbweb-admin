@@ -37,7 +37,7 @@ export class ProductsComponent implements OnInit {
       width: '600px'
     })
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
+      this.products.update(prev => [...prev, result])
     })
   }
 
@@ -48,7 +48,9 @@ export class ProductsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log(result);
+        this.products.update(list =>
+          list.map(p => p.id === result.id ? result : p)
+        );
       }
     });
   }

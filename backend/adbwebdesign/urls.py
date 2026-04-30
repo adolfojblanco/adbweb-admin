@@ -3,12 +3,9 @@ URL configuration for adbwebdesign project.
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -20,6 +17,7 @@ schema_view = get_schema_view(
         license=openapi.License(name="BSD License"),
     ),
     public=True,
+    permission_classes=(permissions.AllowAny),
 )
 
 urlpatterns = [
@@ -27,7 +25,6 @@ urlpatterns = [
 
     # Admin Routes
     path('api/auth/', include('apps.accounts.urls')),
-    path("api-auth/", include("rest_framework.urls")),
 
     # Inventories
     path('api/', include('apps.catalogs.urls')),

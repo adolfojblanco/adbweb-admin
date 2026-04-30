@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from "@angular/router";
+import { AuthService } from '../../../services/auth.service';
+import { User } from '../../../models/user';
 
 @Component({
   selector: 'app-nav-bar',
@@ -7,6 +9,25 @@ import { RouterLink, RouterLinkActive } from "@angular/router";
   templateUrl: './nav-bar.component.html',
   styles: ``
 })
-export class NavBarComponent {
+export class NavBarComponent implements OnInit {
+
+  authService = inject(AuthService);
+  authUser = signal<User | null>(null);
+
+
+
+
+
+
+  ngOnInit(): void {
+    this.getAuthUSer()
+  }
+
+
+  getAuthUSer() {
+    this.authService.getAuthUser().subscribe((res) => {
+      this.authUser.set(res);
+    })
+  }
 
 }

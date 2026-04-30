@@ -21,4 +21,8 @@ export class ProductsService {
     return this.http.post<Product>(`${this.urlEndPoint}/`, product)
   }
 
+  editProduct(product: Product): Observable<Product> {
+    return this.http.put<Product>(`${this.urlEndPoint}/${product.id}/`, product)
+  }
+
 }

@@ -1,11 +1,15 @@
 from rest_framework import permissions
 
+
 class IsAdminUser(permissions.BasePermission):
     def has_permission(self, request, view):
+        # 1. ¿Está autenticado?
         if not (request.user and request.user.is_authenticated):
             return False
-        user_role = getattr(request.user, 'role', None)
-        return str(user_role).strip() == 'ADMIN'
+
+        # 2. ¿Tiene la propiedad is_admin y es True?
+        return getattr(request.user, 'is_admin', False)
+
 
 class IsSellerUser(permissions.BasePermission):
     def has_permission(self, request, view):

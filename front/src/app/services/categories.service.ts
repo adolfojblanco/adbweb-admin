@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Category } from '../models/category';
@@ -21,8 +21,8 @@ export class CategoriesService {
     return this.http.put<Category>(`${this.urlEndPoint}/${category.id}/`, category);
   }
 
-  newCategory() {
-
+  newCategory(category: Category): Observable<Category> {
+    return this.http.post<Category>(`${this.urlEndPoint}/`, category)
   }
 
 }
