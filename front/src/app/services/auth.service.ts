@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 
 import { catchError, Observable, pipe, tap } from 'rxjs';
 import { User } from '../models/user';
@@ -13,36 +13,30 @@ export class AuthService {
   private readonly urlEndPoint: string = `${environment.apiAuth}/auth`;
   private http = inject(HttpClient);
   private router = inject(Router);
-  constructor() { }
 
-  login(user: User): Observable<User> {
-    return this.http.post<User>(`${this.urlEndPoint}/token/`, user).pipe(
-      tap((res: any) => {
-        console.log('res', res);
-        localStorage.setItem('token', res.access);
+  // Inicializamos con el valor real del localStorage
+  private _token = signal<string | null>(localStorage.getItem('token'));
+  public token = this._token.asReadonly(); // Mejor práctica que computed para este caso
+
+  login(user: User): Observable<any> {
+    return this.http.post<any>(`${this.urlEndPoint}/token/`, user).pipe(
+      tap((res) => {
+        const accessToken = res.access; // SimpleJWT usa 'access'
+
+        // 1. Guardamos en el Signal
+        this._token.set(accessToken);
+
+        // 2. Guardamos en LocalStorage
+        localStorage.setItem('token', accessToken);
+
         this.router.navigate(['/admin']);
       })
     );
   }
 
-  /** Load token from localstorage */
-  getToken() {
-    const token: string = localStorage.getItem('token') || '';
-    if (token != '') {
-      return token;
-    } else {
-      this.logout();
-      return null;
-    }
-  }
-
-  /** Get User from token */
-  getAuthUser() {
-    return this.http.get<string>(`${this.urlEndPoint}/me`);
-  }
-
   logout() {
-    localStorage.clear();
-    this.router.navigate(['/auth/login'])
+    localStorage.removeItem('token');
+    this._token.set(null); // Limpiamos el signal
+    this.router.navigate(['/auth/login']);
   }
 }

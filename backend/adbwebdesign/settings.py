@@ -15,7 +15,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:4200']
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
@@ -70,6 +70,16 @@ TEMPLATES = [
         },
     },
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication', # Añade esto para probar desde el navegador
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated', # Cambia temporalmente a esto
+    ),
+}
 
 WSGI_APPLICATION = 'adbwebdesign.wsgi.application'
 

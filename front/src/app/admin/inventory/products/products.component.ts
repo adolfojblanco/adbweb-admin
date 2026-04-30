@@ -48,7 +48,7 @@ export class ProductsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        //this.loadCategories();
+        console.log(result);
       }
     });
   }

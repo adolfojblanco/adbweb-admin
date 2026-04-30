@@ -32,6 +32,8 @@ export function errorInterceptor(
 
         case 403:
           toast.error('No tienes permisos para realizar esta acción.');
+          localStorage.removeItem('token')
+          router.navigate(['/auth/login'])
           break;
 
         case 400:

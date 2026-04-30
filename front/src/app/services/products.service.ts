@@ -17,4 +17,8 @@ export class ProductsService {
     return this.http.get<Product[]>(`${this.urlEndPoint}/`);
   }
 
+  newProduct(product: Product) {
+    return this.http.post<Product>(`${this.urlEndPoint}/`, product)
+  }
+
 }

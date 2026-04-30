@@ -17,7 +17,7 @@
           <mat-label>
             Impuestos --
           </mat-label>
-          <mat-select matNativeControl required formControlName="tax">
+          <mat-select matNativeControl required formControlName="tax_id">
             @for (tax of taxes(); track tax.id) {
             <mat-option [value]="tax.id">{{tax.name}} - {{tax.percentage}}%</mat-option>
             }
@@ -30,7 +30,7 @@
           <mat-label>
             Categoria
           </mat-label>
-          <mat-select matNativeControl required formControlName="category">
+          <mat-select matNativeControl required formControlName="category_id">
             @for (category of categories(); track category.id) {
             <mat-option [value]="category.id">{{category.name}}</mat-option>
             }
@@ -68,6 +68,6 @@
 
   <mat-dialog-actions align="end">
     <button matButton="elevated" mat-dialog-close>Cancel</button>
-    <button matButton="filled" color="primary">Guardar</button>
+    <button matButton="filled" color="primary" (click)="onSubmit()">Guardar</button>
   </mat-dialog-actions>
 </div>

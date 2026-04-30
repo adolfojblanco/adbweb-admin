@@ -1,20 +1,27 @@
 from rest_framework import permissions
 
 class IsAdminUser(permissions.BasePermission):
-    """Solo acceso a administradores"""
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and request.user.role == 'ADMIN')
+        if not (request.user and request.user.is_authenticated):
+            return False
+        user_role = getattr(request.user, 'role', None)
+        return str(user_role).strip() == 'ADMIN'
 
 class IsSellerUser(permissions.BasePermission):
-    """Permite acceso a vendedores y administradores."""
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and
-                    request.user.role in ['ADMIN', 'SELLER'])
+        user_role = getattr(request.user, 'role', None)
+        return bool(
+            request.user and
+            request.user.is_authenticated and
+            user_role in ['ADMIN', 'SELLER']
+        )
 
 class IsOwnerOrAdmin(permissions.BasePermission):
-    """Permite al dueño del objeto o al admin acceder/editar."""
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated)
+
     def has_object_permission(self, request, view, obj):
-        if request.user.role == 'ADMIN':
+        if getattr(request.user, 'role', None) == 'ADMIN':
             return True
-        # Asumiendo que el objeto tiene un campo 'user' o 'owner'
-        return obj.user == request.user
+        # Verifica si el usuario es el dueño (ajusta 'user' según tu modelo)
+        return getattr(obj, 'user', None) == request.user

@@ -6,6 +6,8 @@ import { CategoriesService } from '../../../../services/categories.service';
 import { Category } from '../../../../models/category';
 import { TaxService } from '../../../../services/tax.service';
 import { Tax } from '../../../../models/tax';
+import { ProductsService } from '../../../../services/products.service';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-dialog-product',
@@ -16,7 +18,10 @@ import { Tax } from '../../../../models/tax';
 export class DialogProductComponent implements OnInit {
   private fb = inject(FormBuilder);
   private data = inject(MAT_DIALOG_DATA);
+  private dialogRef = inject(MatDialogRef<DialogProductComponent>)
+  private toast = inject(HotToastService)
   private categoryService = inject(CategoriesService);
+  private productService = inject(ProductsService)
   private taxtService = inject(TaxService);
   public taxes = signal<Tax[]>([]);
   public categories = signal<Category[]>([]);
@@ -29,8 +34,10 @@ export class DialogProductComponent implements OnInit {
     this.loadCategories();
     this.loadTax();
     if (this.data) {
-      console.log(this.data);
+      console.log(this.data.category.id);
       this.productForm.reset(this.data);
+      this.productForm.get('category')?.setValue(this.data.category.id);
+      this.productForm.get('tax')?.setValue(this.data.tax.id);
     }
   }
 
@@ -54,10 +61,25 @@ export class DialogProductComponent implements OnInit {
     description: ['', Validators.required],
     sale_price: ['', [Validators.required, Validators.min(0)]],
     cost_price: ['', [Validators.required, Validators.min(0)]],
-    category: ['', [Validators.required]],
-    tax: ['', [Validators.required]],
+    category_id: ['', [Validators.required]],
+    tax_id: ['', [Validators.required]],
     active: [true]
   })
+
+
+  onSubmit() {
+    const product = this.productForm.value;
+    if (!product.id) {
+      this.productService.newProduct(product).subscribe((res) => {
+        this.dialogRef.close(res),
+        this.toast.success(`Registrado correctamente`)
+      })
+
+    }
+
+    
+    console.log(product);
+  }
 
 
 

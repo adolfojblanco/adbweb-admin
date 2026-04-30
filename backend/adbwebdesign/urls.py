@@ -27,6 +27,7 @@ urlpatterns = [
 
     # Admin Routes
     path('api/auth/', include('apps.accounts.urls')),
+    path("api-auth/", include("rest_framework.urls")),
 
     # Inventories
     path('api/', include('apps.catalogs.urls')),

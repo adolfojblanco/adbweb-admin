@@ -15,10 +15,17 @@ class TaxSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    tax = TaxSerializer(read_only=True)
-    category = CategorySerializer(read_only=True)
+# apps/catalogs/serializers.py
 
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+
+    def to_internal_value(self, data):
+        # Mapeamos los IDs que vienen de Angular al nombre que espera Django
+        if 'category_id' in data:
+            data['category'] = data.pop('category_id')
+        if 'tax_id' in data:
+            data['tax'] = data.pop('tax_id')
+        return super().to_internal_value(data)
