@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.catalogs.models import Product, Category, Tax
+from apps.catalogs.models import Product, Category, Tax, Service, ContractedService
 
 
 @admin.register(Category)
@@ -19,9 +19,22 @@ class ProductAdmin(admin.ModelAdmin):
     autocomplete_fields = ("category", "tax")
     readonly_fields = ("sku", "created_at", "updated_at", "slug")
     ordering = ("-created_at",)
+    list_editable = ('active',)
 
-    @admin.register(Tax)
-    class TaxAdmin(admin.ModelAdmin):
-        list_display = ("name", "percentage", "active")
-        list_filter = ("active",)
-        search_fields = ("name",)
+@admin.register(Tax)
+class TaxAdmin(admin.ModelAdmin):
+    list_display = ("name", "percentage", "active")
+    list_filter = ("active",)
+    search_fields = ("name",)
+
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'base_price', 'tax_percentage', 'is_active')
+    list_editable = ('is_active',)
+
+@admin.register(ContractedService)
+class ContractedServiceAdmin(admin.ModelAdmin):
+    list_display = ('customer', 'service', 'status', 'start_date', 'monthly_fee')
+    list_filter = ('status', 'service')
+    search_fields = ('customer__billing_name', 'service__name')
+
