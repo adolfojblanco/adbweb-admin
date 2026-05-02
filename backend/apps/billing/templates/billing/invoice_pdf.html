@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* Configuración de la página */
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #333333;
+            font-size: 12px;
+        }
+
+        /* Colores principales basados en tu diseño */
+        .color-primary { color: #007EE5; }
+        .bg-primary { background-color: #007EE5; color: white; }
+        .bg-light { background-color: #f4f4f4; }
+
+        /* Tipografía */
+        h1 { font-size: 36px; font-weight: normal; margin: 0; color: #444; letter-spacing: 2px;}
+        h2 { font-size: 18px; margin: 0; }
+        h3 { font-size: 14px; margin: 0; color: #007EE5; margin-bottom: 5px;}
+        p { margin: 2px 0; }
+
+        /* Tablas de Layout (para alinear cosas) */
+        .layout-table { width: 100%; border: none; padding: 0; margin-bottom: 30px; }
+        .layout-table td { vertical-align: top; border: none; }
+
+        /* Tabla de Productos */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .items-table th {
+            background-color: #007EE5;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .items-table td {
+            padding: 10px;
+            border-bottom: 1px solid #dddddd;
+            text-align: center;
+        }
+        /* Alineación específica para descripción y precios */
+        .items-table .text-left { text-align: left; }
+        .items-table .text-right { text-align: right; }
+
+        /* Tabla de Totales */
+        .totals-table { width: 100%; border-collapse: collapse; }
+        .totals-table td { padding: 8px; text-align: right; font-weight: bold;}
+        .total-row td { background-color: #007EE5; color: white; font-size: 16px; padding: 18px; }
+
+        /* Separador de firma */
+        .signature-line {
+            border-top: 1px solid #333;
+            width: 150px;
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CABECERA PRINCIPAL -->
+    <table class="layout-table">
+        <tr>
+            <!-- Izquierda: Tu Marca -->
+<td width="50%">
+                <!-- Como forzaste el logo a guardarse en static, lo cargamos así: -->
+                <img src="{% static 'img/logo.png' %}" width="150" alt="Logo">
+
+                <h2 class="color-primary">{{ invoice.company.name }}</h2>
+                <p>Móvil: {{ invoice.company.phone }}</p>
+                <p>Email: {{ invoice.company.email_company }}</p>
+                <p>NIF: <b>AQUÍ_FALTA_TU_CIF</b></p>
+                <p><b>{{ invoice.company.address }}, {{ invoice.company.city }}</b></p>
+
+                {% if invoice.company.website %}
+                    <p>{{ invoice.company.website }}</p>
+                {% endif %}
+            </td>
+
+            <!-- Derecha: Datos de la Factura -->
+            <td width="50%" style="text-align: right;">
+                <h1>INVOICE</h1>
+                <br>
+                <table style="width: 100%; text-align: right;">
+                    <tr>
+                        <td><b>Invoice#:</b></td>
+                        <td>{{ invoice.number }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Date:</b></td>
+                        <td>{{ invoice.issue_date|date:"d / m / Y" }}</td>
+                    </tr>
+                    <!-- Opcional: Fecha de Vencimiento -->
+                    <tr>
+                        <td><b>Due Date:</b></td>
+                        <td>{{ invoice.due_date|date:"d / m / Y" }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- DATOS DEL CLIENTE -->
+    <table class="layout-table">
+        <tr>
+            <td width="50%">
+                <h3>Invoice to:</h3>
+                <h2 style="margin-bottom: 5px;">{{ invoice.customer.billing_name }}</h2>
+                <p>NIF/CIF: {{ invoice.customer.tax_id }}</p>
+                <!-- Asumiendo que tu cliente tiene campos de dirección, ajústalos si se llaman distinto -->
+                <p>{{ invoice.customer.address|default:"Dirección no especificada" }}</p>
+            </td>
+            <td width="50%"></td>
+        </tr>
+    </table>
+
+    <!-- TABLA DE PRODUCTOS -->
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th width="10%">Item</th>
+                <th width="50%" class="text-left">Description</th>
+                <th width="15%" class="text-right">Price</th>
+                <th width="10%">Qty.</th>
+                <th width="15%" class="text-right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- El contador de for (forloop.counter) hace la columna SL. automáticamente -->
+            {% for item in invoice.items.all %}
+            <tr class="{% cycle 'bg-light' '' %}">
+                <td>{{ forloop.counter }}</td>
+                <td class="text-left">
+                    <b>{{ item.product.name }}</b><br>
+                    <span style="font-size: 10px; color: #666;">{{ item.description }}</span>
+                </td>
+                <td class="text-right">{{ item.unit_price }} €</td>
+                <td>{{ item.quantity }}</td>
+                <td class="text-right">{{ item.total }} €</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No hay productos en esta factura.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- SECCIÓN INFERIOR: Pagos, Términos y Totales -->
+    <table class="layout-table">
+        <tr>
+            <!-- Izquierda: Info de Pago -->
+            <td width="55%" style="padding-right: 20px;">
+                <h3>Thank you for your business</h3>
+                <br>
+
+                <h3 style="font-size: 12px;">Payment Info:</h3>
+                <table style="font-size: 10px; margin-bottom: 20px;">
+                    <tr><td width="80"><b>Account #:</b></td><td><b>ESXX XXXX XXXX XXXX XXXX</b></td></tr>
+                    <tr><td><b>A/C Name:</b></td><td>Adolfo / ADB Web & Design</td></tr>
+                    <tr><td><b>Bank Details:</b></td><td><b>NOMBRE_DE_TU_BANCO</b></td></tr>
+                </table>
+
+                <h3 style="font-size: 12px;">Terms & Conditions</h3>
+                <p style="font-size: 9px; color: #666; line-height: 1.4;">
+                    El pago debe realizarse mediante transferencia bancaria en un plazo máximo de X días desde la fecha de emisión.
+                    Por favor, indique el número de factura en el concepto de la transferencia.
+                </p>
+            </td>
+
+            <!-- Derecha: Totales y Firma -->
+            <td width="45%">
+                <table class="totals-table">
+                    <tr>
+                        <td>Sub Total:</td>
+                        <td>{{ invoice.subtotal }} €</td>
+                    </tr>
+                    <tr>
+                        <td>Tax (IVA):</td>
+                        <td>{{ invoice.tax_amount }} €</td>
+                    </tr>
+                    <!-- Fila Azul de Total -->
+                    <tr class="total-row">
+                        <td>Total:</td>
+                        <td>{{ invoice.total }} €</td>
+                    </tr>
+                    <!-- Info extra de pagos parciales -->
+                    <tr>
+                        <td style="color: #666; font-size: 10px; padding-top: 10px;">Amount Paid:</td>
+                        <td style="color: #666; font-size: 10px; padding-top: 10px;">{{ invoice.total_paid }} €</td>
+                    </tr>
+                    <tr>
+                        <td style="color: #d9534f; font-size: 12px;"><b>Balance Due:</b></td>
+                        <td style="color: #d9534f; font-size: 12px;"><b>{{ invoice.pending_amount }} €</b></td>
+                    </tr>
+                </table>
+
+                <div style="text-align: right; margin-top: 20px;">
+                    <div class="signature-line" style="float: right;">
+                        Authorised Sign
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

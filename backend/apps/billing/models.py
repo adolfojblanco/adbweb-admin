@@ -8,6 +8,7 @@ from django.dispatch import receiver
 
 from apps.core.models import TimeStampedModel
 from apps.catalogs.models import Product
+from apps.company.models import Company
 
 
 # Modelos de facturación
@@ -36,6 +37,13 @@ class Invoice(TimeStampedModel):
     customer = models.ForeignKey('accounts.CustomerUser', on_delete=models.RESTRICT, related_name='invoices')
     seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                                related_name='sales')
+    company = models.ForeignKey(
+        Company,
+        on_delete=models.PROTECT,  # PROTECT evita que borres una empresa si tiene facturas
+        null=True,
+        blank=True,
+        verbose_name="Empresa Emisora"
+    )
 
     # Totales (Caché)
     subtotal = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -97,7 +105,13 @@ class Invoice(TimeStampedModel):
                 # Si cambió, reconstruimos el número con el nuevo prefijo pero MISMO PK
                 self.number = f"{prefix}-{year}-{self.pk:04d}"
 
-            # Guardamos los cambios normalmente
+        if not self.company_id:
+            from apps.company.models import Company
+            # buscamos la primera empresa que exista en la base de datos y se la asignamos
+            primera_empresa = Company.objects.first()
+            if primera_empresa:
+                self.company = primera_empresa
+
             super().save(*args, **kwargs)
 
     def update_totals(self):

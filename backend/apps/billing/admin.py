@@ -1,8 +1,10 @@
 from django.contrib import admin
-
+from django.urls import path
+from django.utils.safestring import mark_safe
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import Invoice, InvoiceItem, Payment
+from .views import export_invoice_pdf
 
 
 class InvoiceItemInline(admin.TabularInline):
@@ -20,9 +22,34 @@ class PaymentInline(admin.TabularInline):
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
     # 1. Lista General: Añadimos colores y el saldo pendiente
-    list_display = ('number', 'customer', 'document_type', 'status_color', 'total', 'display_pending', 'issue_date')
+    list_display = ('number', 'customer', 'document_type', 'status_color', 'total', 'display_pending', 'pdf_button')
     list_filter = ('document_type', 'status', 'issue_date')
     search_fields = ('number', 'customer__billing_name', 'customer__tax_id')
+
+    def pdf_button(self, obj):
+        if obj.id:
+            from django.urls import reverse
+            try:
+                # AQUÍ ESTÁ LA CLAVE: Tiene que decir 'billing:invoice_pdf_final'
+                url = reverse('billing:invoice_pdf_final', args=[obj.id])
+                return mark_safe(
+                    f'<a class="button" style="background-color: #79aec8; color: white;" href="{url}" target="_blank">📄 PDF</a>')
+            except Exception as e:
+                return format_html('<span style="color:red; font-size:10px;">Error: {}</span>', str(e))
+        return ""
+
+    pdf_button.short_description = "Acciones"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                '<int:invoice_id>/pdf/',
+                self.admin_site.admin_view(export_invoice_pdf),
+                name='generar_factura_pdf_global',  # Un nombre único y manual
+            ),
+        ]
+        return custom_urls + urls
 
     # 2. Formulario: Organizamos para ver cuánto se ha cobrado
     fieldsets = (

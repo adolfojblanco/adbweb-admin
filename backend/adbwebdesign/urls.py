@@ -6,6 +6,7 @@ from django.urls import path, include
 from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from apps.billing.views import export_invoice_pdf
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -17,7 +18,7 @@ schema_view = get_schema_view(
         license=openapi.License(name="BSD License"),
     ),
     public=True,
-    permission_classes=(permissions.AllowAny),
+    permission_classes=[permissions.AllowAny],
 )
 
 urlpatterns = [
@@ -27,7 +28,9 @@ urlpatterns = [
     path('api/auth/', include('apps.accounts.urls')),
 
     # Inventories
-    path('api/', include('apps.catalogs.urls')),
+    path('api/', include(('apps.catalogs.urls', 'catalogs'))),
+    path('api/', include(('apps.billing.urls', 'billing'))),
+
 
     # Docu routes
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
