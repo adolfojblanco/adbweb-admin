@@ -15,15 +15,9 @@ export class NavBarComponent implements OnInit {
   authUser = signal<User | null>(null);
 
 
-
-
-
-
   ngOnInit(): void {
     this.getAuthUSer()
   }
-
-
   getAuthUSer() {
     this.authService.getAuthUser().subscribe((res) => {
       this.authUser.set(res);

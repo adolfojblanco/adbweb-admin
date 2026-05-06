@@ -22,6 +22,10 @@ export const inventoryRoutes: Routes = [
       {
         path: 'taxes',
         component: TaxesComponent
+      },
+      {
+        path: 'services',
+        component: TaxesComponent
       }
     ]
   },

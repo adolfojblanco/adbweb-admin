@@ -1,7 +1,7 @@
 """
 Django settings for adbwebdesign project.
 """
-
+from datetime import timedelta
 from pathlib import Path
 import os
 
@@ -42,6 +42,7 @@ LOCAL_APPS = [
     'apps.marketing',
     'apps.billing',
     'apps.company',
+    'apps.seo'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -115,20 +116,24 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # --- ARCHIVOS ESTÁTICOS (CSS, JS, Imágenes de la plantilla) ---
-
 STATIC_URL = '/static/'
-
 # 1. Dónde pones TÚ los archivos (tu carpeta de diseño)
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-
 # 2. Dónde los juntará DJANGO (El que te está pidiendo el error)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 # --- ARCHIVOS MEDIA (Subidas de usuario) ---
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+SIMPLE_JWT = {
+    # 1. El token que envía Angular en cada petición (El pase rápido)
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+
+    # 2. El token que se usa para renovar el Access Token sin pedir contraseña
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=2),
+}
 
 # Internationalization
 LANGUAGE_CODE = 'es-ES'

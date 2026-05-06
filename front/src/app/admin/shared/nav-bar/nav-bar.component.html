@@ -35,13 +35,14 @@
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <li>
-              <a class="dropdown-item" routerLink="./inventory/categories" routerLinkActive="active">Categorias</a>
+              <a class="dropdown-item" [routerLink]="['/invoice']" routerLinkActive="active">Presupuesto</a>
             </li>
             <li>
-              <a class="dropdown-item" routerLink="./inventory/products" routerLinkActive="active">Productos</a>
+              <a class="dropdown-item" routerLink="./invoice/new" routerLinkActive="active">Nueva Factura</a>
             </li>
             <li>
-              <a class="dropdown-item" routerLink="./inventory/taxes" routerLinkActive="active">Impuestos</a>
+              <a class="dropdown-item" routerLink="./invoice/payment-methods" routerLinkActive="active">Metodos de
+                Pago</a>
             </li>
           </ul>
         </li>

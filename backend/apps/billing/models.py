@@ -212,3 +212,25 @@ def update_invoice_on_save(sender, instance, **kwargs):
 def update_invoice_on_delete(sender, instance, **kwargs):
     if instance.invoice:
         instance.invoice.update_totals()
+
+
+
+class PaymentMethod(TimeStampedModel):
+    name = models.CharField(max_length=100, verbose_name="Metodo de Pago")
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.title()
+        super().save(*args, **kwargs)
+
+
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = "Metodos de pago"
+        verbose_name = "Metodo de pago"
+
+    def __str__(self):
+        return self.name
+
+
+
+

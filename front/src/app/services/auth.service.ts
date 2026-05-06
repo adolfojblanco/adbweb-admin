@@ -56,4 +56,8 @@ export class AuthService {
     this.userSignal.set(null);
     this.router.navigate(['/auth/login']);
   }
+
+  customerSearch(search: string): Observable<User[]> {
+    return this.http.get<User[]>(`${this.urlEndPoint}/customers/search/?search=${search}`);
+  }
 }

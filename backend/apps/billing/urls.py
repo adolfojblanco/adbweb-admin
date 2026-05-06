@@ -1,7 +1,13 @@
 from django.urls import path
-from .views import export_invoice_pdf
+from rest_framework.routers import DefaultRouter
+from .views import export_invoice_pdf, PaymentMethodsViewSet
 
-# Importante: No pongas barras '/' al principio de los strings de path
+# Billing Routes
+
+router = DefaultRouter()
+
+router.register(r"payment-methods", PaymentMethodsViewSet, basename="payment-methods")
+
 urlpatterns = [
     path('invoice/<int:invoice_id>/pdf/', export_invoice_pdf, name='invoice_pdf_final'),
-]
+] + router.urls

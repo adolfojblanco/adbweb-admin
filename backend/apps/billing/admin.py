@@ -3,7 +3,7 @@ from django.urls import path
 from django.utils.safestring import mark_safe
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Invoice, InvoiceItem, Payment
+from .models import Invoice, InvoiceItem, Payment, PaymentMethod
 from .views import export_invoice_pdf
 
 
@@ -104,3 +104,7 @@ class InvoiceAdmin(admin.ModelAdmin):
         )
     status_color.short_description = "Estado"
 
+@admin.register(PaymentMethod)
+class PaymentMethodAdmin(admin.ModelAdmin):
+    list_display = ('name', 'active')
+    search_fields = ('name',)

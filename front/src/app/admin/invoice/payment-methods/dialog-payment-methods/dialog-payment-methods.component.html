@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Metodos de Pago:</h2>
+<mat-divider></mat-divider>
+<div class="col-12">
+  <mat-dialog-content class="mat-typography">
+    <form autocomplete="off" class="row" [formGroup]="paymentMethodForm"]>
+      <p>
+        <mat-form-field class="full-width" appearance="fill">
+          <mat-label>Nombre</mat-label>
+          <input type="text" matInput placeholder="Categoria" formControlName="name" class="full-width" required>
+          <mat-hint>El campo es requerido</mat-hint>
+        </mat-form-field>
+      </p>
+
+      <p>
+        <mat-slide-toggle formControlName="active" name="active">Activo</mat-slide-toggle>
+      </p>
+
+    </form>
+    <mat-divider></mat-divider>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button matButton="elevated" mat-dialog-close>Cancel</button>
+    <button matButton="filled" color="primary" (click)="submit()">Guardar</button>
+  </mat-dialog-actions>
+</div>

@@ -1,9 +1,10 @@
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from rest_framework import generics, filters
+from .models import CustomerUser
 
-
-from .serializers import UserSerializer
+from .serializers import UserSerializer, CustomerSerializer
 
 
 # View for accounts
@@ -13,3 +14,9 @@ class UserView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+
+class CustomerSearchView(generics.ListAPIView):
+    queryset = CustomerUser.objects.all()
+    serializer_class = CustomerSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['billing_name']
