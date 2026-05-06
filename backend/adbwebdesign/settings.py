@@ -81,7 +81,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication', # Útil para ver Swagger logueado
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny', # Permitimos el acceso general
+        'rest_framework.permissions.IsAuthenticated', # Permitimos el acceso general
+    ),
+    "DEFAULT_FILTER_BACKENDS": (
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
     ),
 }
 

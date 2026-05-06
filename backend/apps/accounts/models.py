@@ -47,7 +47,10 @@ class CustomerUser(models.Model):
     customer_type = models.CharField(max_length=20, choices=CustomerType.choices, default=CustomerType.PERSON)
     billing_name = models.CharField(max_length=255, verbose_name="Nombre Comercial o Razón Social")
     tax_id = models.CharField(max_length=50, verbose_name="CIF / NIF / NIE")
-    address = models.TextField(verbose_name="Dirección de Facturación")
+    address = models.CharField(max_length=200, verbose_name="Dirección")
+    city = models.CharField(max_length=200, verbose_name="Ciudad")
+    province = models.CharField(max_length=200, verbose_name="Provincia")
+    postal_code = models.CharField(max_length=10, blank=True, null=True)
 
     # Datos de Contacto Directo
     contact_email = models.EmailField(verbose_name="Correo para envío de facturas")
