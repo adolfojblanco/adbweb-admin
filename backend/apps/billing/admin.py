@@ -4,9 +4,9 @@ from .models import  PaymentMethod, Invoice
 
 @admin.register(PaymentMethod)
 class PaymentMethodAdmin(admin.ModelAdmin):
-    list_display = ('name', 'active')
+    list_display = ('name', 'is_active')
     search_fields = ('name',)
-    list_editable = ('active',)
+    list_editable = ('is_active',)
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):

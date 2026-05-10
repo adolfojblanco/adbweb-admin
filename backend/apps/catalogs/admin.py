@@ -13,18 +13,18 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display_links = ("sku", "name")
-    list_display = ("sku", "name", "category", "sale_price", "cost_price", "active", "created_at")
-    list_filter = ("active", "category", "tax")
+    list_display = ("sku", "name", "category", "sale_price", "cost_price", "is_active", "created_at")
+    list_filter = ("is_active", "category", "tax")
     search_fields = ("sku", "name", "description")
     autocomplete_fields = ("category", "tax")
     readonly_fields = ("sku", "created_at", "updated_at", "slug")
     ordering = ("-created_at",)
-    list_editable = ('active',)
+    list_editable = ('is_active',)
 
 @admin.register(Tax)
 class TaxAdmin(admin.ModelAdmin):
-    list_display = ("name", "percentage", "active")
-    list_filter = ("active",)
+    list_display = ("name", "percentage", "is_active")
+    list_filter = ("is_active",)
     search_fields = ("name",)
 
 @admin.register(Service)
