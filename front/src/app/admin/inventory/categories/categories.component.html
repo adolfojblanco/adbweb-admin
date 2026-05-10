@@ -7,50 +7,42 @@
       </button>
     </div>
     <hr>
-      <div class="mat-elevation-z8">
-        <table mat-table [dataSource]="categories()">
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="categories()">
 
-          <!-- Position Column -->
-          <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef> <strong>Id. </strong></th>
-            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-          </ng-container>
+        <!-- Position Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef> <strong>Id. </strong></th>
+          <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+        </ng-container>
 
-          <!-- Name Column -->
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef> <strong>Categoria</strong> </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-          </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> <strong>Categoria</strong> </th>
+          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        </ng-container>
 
-          <!-- active Column -->
-          <ng-container matColumnDef="active">
-            <th mat-header-cell *matHeaderCellDef> <strong>Activo</strong> </th>
-            <td mat-cell *matCellDef="let element">
-              @if (element.active) {
-              <mat-icon class="text-success">done</mat-icon>
-              }
-              @if (!element.active) {
-              <mat-icon class="text-danger">block</mat-icon>
-              }
-            </td>
-          </ng-container>
+        <!-- active Column -->
+        <ng-container matColumnDef="is_active">
+          <th mat-header-cell *matHeaderCellDef> <strong>Activo</strong> </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-icon class="{{element.is_active | isActive }}" fontIcon="power_settings_new"></mat-icon>
+          </td>
+        </ng-container>
 
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="text-center"> <strong>Acciones</strong> </th>
+          <td mat-cell *matCellDef="let element" class="text-center">
+            <button matButton="filled" (click)="editCategory(element)">Detalle <mat-icon>info</mat-icon></button>
+          </td>
+        </ng-container>
 
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef class="text-center"> <strong>Acciones</strong> </th>
-            <td mat-cell *matCellDef="let element" class="text-center">
-              <a matButton="filled" class="border-radius"
-                (click)="editCategory(element)">Detalle<mat-icon>info</mat-icon></a>
-            </td>
-          </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-
-        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
-          aria-label="Select page of periodic elements">
-        </mat-paginator>
-      </div>
+      <mat-paginator class="mt-4" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+      </mat-paginator>
+    </div>
   </div>
 </div>

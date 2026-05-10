@@ -1,5 +1,5 @@
 export interface PaymentsMethods {
   id: number | null;
   name: string;
-  active: boolean;
+  is_active: boolean;
 }

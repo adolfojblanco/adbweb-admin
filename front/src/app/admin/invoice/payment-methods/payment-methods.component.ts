@@ -16,7 +16,7 @@ export class PaymentMethodsComponent implements OnInit {
   private dialog = inject(MatDialog);
   payments = signal<PaymentsMethods[]>([]);
   private paymentServices = inject(PaymentMethodsService);
-  public displayedColumns: string[] = ['name', 'active', 'actions'];
+  displayedColumns: string[] = ['name', 'is_active', 'actions'];
 
 
 
@@ -29,31 +29,6 @@ export class PaymentMethodsComponent implements OnInit {
       this.payments.set(res)
     });
   }
-
-  // /** Add a new Category */
-  // newCategory() {
-  //   const dialogRef = this.dialog.open(DialogCategoriesComponent, {
-  //     width: '450px',
-  //   });
-  //   dialogRef.afterClosed().subscribe((result) => {
-  //     if (result) {
-  //       this.categories.update(prev => [...prev, result])
-  //     }
-  //   });
-  // }
-
-  // /** Edit a category */
-  // editCategory(category: Category) {
-  //   const dialogRef = this.dialog.open(DialogCategoriesComponent, {
-  //     width: '450px',
-  //     data: category
-  //   })
-  //   dialogRef.afterClosed().subscribe(category => {
-  //     if (category) {
-  //       this.categories.update(categories => categories.map(c => c.id === category.id ? category : c))
-  //     }
-  //   })
-  // }
 
   newPaymentMethod() {
     const dialogRef = this.dialog.open(DialogPaymentMethodsComponent, {

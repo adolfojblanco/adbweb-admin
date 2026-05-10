@@ -3,7 +3,7 @@
     <div class="d-flex">
       <h3 class="card-title flex-grow-1">Metodos de Pagos:</h3>
       <button type="button" (click)="newPaymentMethod()" class="btn btn-primary btn-sm">
-        <i class="bi bi-plus-circle-fill"></i> Nueva
+        <i class="bi bi-plus-circle-fill"></i> Nuevo
       </button>
     </div>
     <hr>
@@ -23,10 +23,10 @@
         </ng-container>
 
         <!-- active Column -->
-        <ng-container matColumnDef="active">
+        <ng-container matColumnDef="is_active">
           <th mat-header-cell *matHeaderCellDef> <strong>Estado</strong> </th>
           <td mat-cell *matCellDef="let element">
-            <i class="{{element.active | isActive }}"></i>
+            <i class="{{element.is_active | isActive }}"></i>
           </td>
         </ng-container>
 
@@ -42,9 +42,6 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
-
-      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
-      </mat-paginator>
     </div>
   </div>
 </div>

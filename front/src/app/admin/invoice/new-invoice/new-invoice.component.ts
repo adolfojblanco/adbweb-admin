@@ -1,10 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
+import { MaterialModule } from '../../shared/material/material.module';
 
 @Component({
   selector: 'app-new-invoice',
-  imports: [FormsModule],
+  imports: [FormsModule, MaterialModule],
   templateUrl: './new-invoice.component.html',
   styles: ``,
 })

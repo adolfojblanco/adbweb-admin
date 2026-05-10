@@ -30,7 +30,7 @@ export class DialogPaymentMethodsComponent implements OnInit {
   paymentMethodForm: FormGroup = this.fb.group({
     id: null,
     name: ['', [Validators.required]],
-    active: [true]
+    is_active: [true]
   })
 
   submit() {

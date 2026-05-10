@@ -1,5 +1,5 @@
 export interface Category {
   id?: number;
   name: string;
-  active: boolean;
+  is_active: boolean;
 }

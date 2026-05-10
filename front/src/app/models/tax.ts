@@ -2,5 +2,5 @@ export interface Tax {
   id?: number;
   name: string;
   percentage: number
-  active: boolean;
+  is_active: boolean;
 }

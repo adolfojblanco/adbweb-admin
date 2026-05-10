@@ -4,11 +4,12 @@ import { CategoriesService } from '../../../services/categories.service';
 import { MaterialModule } from '../../shared/material/material.module';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogCategoriesComponent } from './dialog-categories/dialog-categories.component';
+import { IsActivePipe } from '../../../pipes/is-active.pipe';
 
 
 @Component({
   selector: 'app-categories',
-  imports: [MaterialModule],
+  imports: [MaterialModule, IsActivePipe],
   templateUrl: './categories.component.html',
   styles: ``
 })
@@ -16,7 +17,7 @@ export class CategoriesComponent implements OnInit {
   private dialog = inject(MatDialog);
   private catService = inject(CategoriesService);
   public categories = signal<Category[]>([]);
-  public displayedColumns: string[] = ['name', 'active', 'actions'];
+  public displayedColumns: string[] = ['name', 'is_active', 'actions'];
 
   public title = '';
 
@@ -25,7 +26,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   loadCategories() {
-    this.catService.loadCategories().subscribe(res => { this.categories.set(res) });
+    this.catService.loadCategories().subscribe(res => {this.categories.set(res) });
   }
 
   /** Add a new Category */

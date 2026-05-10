@@ -19,7 +19,7 @@ export class DialogCategoriesComponent implements OnInit {
   private toast = inject(HotToastService);
 
   constructor(public dialogRef: MatDialogRef<DialogCategoriesComponent>) { };
-  
+
   ngOnInit(): void {
     if (this.data) {
       this.categoryForm.reset(this.data)
@@ -29,7 +29,7 @@ export class DialogCategoriesComponent implements OnInit {
   public categoryForm: FormGroup = this.fb.group({
     id: [null],
     name: ['', [Validators.required, Validators.minLength(3)]],
-    active: [true]
+    is_active: [true]
   })
 
   submit() {

@@ -1,0 +1,143 @@
+<!-- Contenedor Principal -->
+<div>
+  <mat-card class="mat-elevation-z4" style="border-radius: 8px; overflow: hidden; padding: 0;">
+
+    <!-- HEADER -->
+    <mat-card-header style="background-color: #3f51b5; color: white; padding: 20px; margin-bottom: 20px;">
+      <div mat-card-avatar
+        style="background-color: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+        <mat-icon>receipt</mat-icon>
+      </div>
+      <mat-card-title style="color: white; font-size: 1.5rem; margin-bottom: 4px;">Nueva Factura</mat-card-title>
+      <mat-card-subtitle style="color: #e0e0e0;">#INV-0001 | Estado: Borrador</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content style="padding: 0 24px;">
+
+      <!-- SECCIÓN: EMISIÓN (Datos del Cliente) -->
+      <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 32px;">
+
+        <!-- CLIENTE -->
+        <mat-form-field appearance="outline" style="flex: 1; min-width: 300px;">
+          <mat-label>Cliente</mat-label>
+          <mat-icon matPrefix style="margin-right: 8px;">search</mat-icon>
+          <input matInput value="Empresa XYZ S.A." readonly>
+          <button mat-icon-button matSuffix title="Crear nuevo cliente">
+            <mat-icon>person_add</mat-icon>
+          </button>
+        </mat-form-field>
+
+      </div>
+
+      <!-- TÍTULO DE DETALLES -->
+      <h3 style="color: #3f51b5; margin-bottom: 14px; font-weight: 500; font-size: 1.2rem;">Detalle de Productos</h3>
+
+      <!-- SECCIÓN: BUSCADOR DE PRODUCTOS PARA AGREGAR -->
+      <div
+        style="display: flex; gap: 16px; align-items: center; margin-bottom: 24px; background-color: #f8f9fa; padding: 16px; border-radius: 8px; border: 1px dashed #ccc;">
+
+        <mat-form-field appearance="outline" style="flex: 1; margin-bottom: -1.25em;">
+          <mat-label>Buscar producto por Código, SKU o Nombre...</mat-label>
+          <mat-icon matPrefix style="margin-right: 8px; color: #3f51b5;">qr_code_scanner</mat-icon>
+          <input matInput placeholder="Ej. Camiseta o SKU-001">
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" style="height: 56px; padding: 0 24px;">
+          <mat-icon>add_shopping_cart</mat-icon> Agregar
+        </button>
+
+      </div>
+
+      <!-- SECCIÓN: TABLA DE PRODUCTOS (Maquetada estáticamente) -->
+      <div class="mat-elevation-z2" style="border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+
+          <!-- Encabezados de Tabla -->
+          <thead>
+            <tr style="background-color: #f5f5f5; border-bottom: 1px solid #e0e0e0; height: 56px;">
+              <th style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87);">Código</th>
+              <th style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87);">Producto</th>
+              <th style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87); text-align: center;">Cantidad</th>
+              <th style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87); text-align: right;">P. Unitario
+              </th>
+              <th style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87); text-align: right;">Subtotal</th>
+              <th style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87); text-align: center;">Quitar</th>
+            </tr>
+          </thead>
+
+          <!-- Cuerpo de la Tabla -->
+          <tbody>
+            <!-- Fila 1 -->
+            <tr style="border-bottom: 1px solid #e0e0e0; height: 52px;">
+              <td style="padding: 0 16px;">
+                <span
+                  style="background: #e0e0e0; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;">SKU-001</span>
+              </td>
+              <td style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87);">Camiseta Personalizada</td>
+              <td style="padding: 0 16px; text-align: center;">
+                <input type="number" value="2"
+                  style="width: 60px; text-align: center; padding: 6px; border: 1px solid #ccc; border-radius: 4px; outline: none;">
+              </td>
+              <td style="padding: 0 16px; text-align: right;">$8.00</td>
+              <td style="padding: 0 16px; text-align: right; font-weight: 500;">$16.00</td>
+              <td style="padding: 0 16px; text-align: center;">
+                <button mat-icon-button color="warn">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+
+            <!-- Fila 2 -->
+            <tr style="border-bottom: 1px solid #e0e0e0; height: 52px;">
+              <td style="padding: 0 16px;">
+                <span
+                  style="background: #e0e0e0; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;">SKU-002</span>
+              </td>
+              <td style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87);">Taza Mágica</td>
+              <td style="padding: 0 16px; text-align: center;">
+                <input type="number" value="1"
+                  style="width: 60px; text-align: center; padding: 6px; border: 1px solid #ccc; border-radius: 4px; outline: none;">
+              </td>
+              <td style="padding: 0 16px; text-align: right;">$10.00</td>
+              <td style="padding: 0 16px; text-align: right; font-weight: 500;">$10.00</td>
+              <td style="padding: 0 16px; text-align: center;">
+                <button mat-icon-button color="warn">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SECCIÓN: TOTALES -->
+      <div style="display: flex; justify-content: flex-end; margin-top: 32px; margin-bottom: 16px;">
+        <div style="width: 320px; background: #f5f5f5; padding: 24px; border-radius: 8px; border: 1px solid #e0e0e0;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px; color: rgba(0,0,0,0.6);">
+            <span>Subtotal:</span> <b style="color: rgba(0,0,0,0.87);">$26.00</b>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px; color: rgba(0,0,0,0.6);">
+            <span>Impuestos (21%):</span> <b style="color: rgba(0,0,0,0.87);">$4.16</b>
+          </div>
+          <hr style="border: none; border-top: 1px solid #ddd; margin: 16px 0;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 18px; color: #3f51b5; font-weight: 500;">Total a Pagar:</span>
+            <b style="font-size: 28px; color: #3f51b5;">$30.16</b>
+          </div>
+        </div>
+      </div>
+
+    </mat-card-content>
+
+    <!-- FOOTER / ACCIONES -->
+    <mat-card-actions align="end"
+      style="padding: 16px 24px; border-top: 1px solid #e0e0e0; background-color: #fafafa; margin: 0;">
+      <button mat-button color="warn" style="margin-right: 8px;">Cancelar</button>
+      <button mat-raised-button color="primary">
+        <mat-icon>save</mat-icon> Guardar Factura
+      </button>
+    </mat-card-actions>
+
+  </mat-card>
+
+</div>

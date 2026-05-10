@@ -6,7 +6,7 @@ from .models import Tax, Product, Category
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'name', 'active']
+        fields = ['id', 'name', 'is_active']
 
 
 class TaxSerializer(serializers.ModelSerializer):

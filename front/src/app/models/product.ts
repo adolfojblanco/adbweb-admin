@@ -6,7 +6,7 @@ export interface Product {
   sku: string;
   name: string;
   description: string
-  active: boolean;
+  is_active: boolean;
   slug?: string
   sale_price: number;
   cost_price: number;
