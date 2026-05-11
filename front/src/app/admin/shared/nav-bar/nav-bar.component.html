@@ -35,15 +35,22 @@
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <li>
-              <a class="dropdown-item" [routerLink]="['/invoice']" routerLinkActive="active">Presupuesto</a>
+              <a class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/invoice']"
+                routerLinkActive="active"><i class="bi bi-receipt-cutoff"></i>Presupuesto</a>
             </li>
             <li>
-              <a class="dropdown-item" routerLink="./invoice/new" routerLinkActive="active">Nueva Factura</a>
+              <a class="dropdown-item d-flex align-items-center gap-2" routerLink="./invoice/new"
+                routerLinkActive="active"><i class="bi bi-receipt"></i>Nueva Factura</a>
             </li>
             <li>
-              <a class="dropdown-item" routerLink="./invoice/payment-methods" routerLinkActive="active">Metodos de
-                Pago</a>
+              <a class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/admin/invoice/payment-methods']"
+                routerLinkActive="active">
+                <i class="bi bi-wallet2"></i>Metodos de Pago</a>
             </li>
+            <a class="dropdown-item d-flex align-items-center gap-2" [routerLink]="['/admin/invoice/suppliers']"
+              routerLinkActive="active">
+              <i class="bi bi-truck"></i> Proveedores
+            </a>
           </ul>
         </li>
       </ul>

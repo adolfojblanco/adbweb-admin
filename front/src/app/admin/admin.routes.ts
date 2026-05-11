@@ -3,6 +3,7 @@ import { AdminComponent } from "./admin.component";
 
 
 
+
 export const adminRoutes: Routes = [
   {
     path: '',
@@ -15,12 +16,12 @@ export const adminRoutes: Routes = [
       {
         path: 'invoice',
         loadChildren: () => import('./invoice/invoice.routes')
-      }
+      },
     ]
   },
   {
     path: '**',
-    redirectTo: ''
+    redirectTo: 'admin'
   }
 ];
 
