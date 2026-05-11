@@ -1,16 +1,14 @@
-import { CategoriesService } from './../../../services/categories.service';
-
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ProductsService } from '../../../services/products.service';
 import { Product } from '../../../models/product';
 import { MaterialModule } from '../../shared/material/material.module';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogProductComponent } from './dialog-product/dialog-product.component';
-import { Category } from '../../../models/category';
+import { IsActivePipe } from '../../../pipes/is-active.pipe';
 
 @Component({
   selector: 'app-products',
-  imports: [MaterialModule],
+  imports: [MaterialModule, IsActivePipe],
   templateUrl: './products.component.html',
   styles: ``
 })

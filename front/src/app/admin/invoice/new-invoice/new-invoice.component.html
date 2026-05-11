@@ -39,11 +39,11 @@
         <mat-form-field appearance="outline" style="flex: 1; margin-bottom: -1.25em;">
           <mat-label>Buscar producto por Código, SKU o Nombre...</mat-label>
           <mat-icon matPrefix style="margin-right: 8px; color: #3f51b5;">qr_code_scanner</mat-icon>
-          <input matInput placeholder="Ej. Camiseta o SKU-001">
+          <input matInput placeholder="Ej. Camiseta o SKU-001" (keyup.enter)="onSearch(txtSearch.value)" #txtSearch>
         </mat-form-field>
 
         <button mat-raised-button color="primary" style="height: 56px; padding: 0 24px;">
-          <mat-icon>add_shopping_cart</mat-icon> Agregar
+          <mat-icon>add_shopping_cart</mat-icon> Buscar
         </button>
 
       </div>

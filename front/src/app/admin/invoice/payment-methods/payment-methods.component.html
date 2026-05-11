@@ -26,7 +26,7 @@
         <ng-container matColumnDef="is_active">
           <th mat-header-cell *matHeaderCellDef> <strong>Estado</strong> </th>
           <td mat-cell *matCellDef="let element">
-            <i class="{{element.is_active | isActive }}"></i>
+            <mat-icon class="{{element.is_active | isActive }}" fontIcon="power_settings_new"></mat-icon>
           </td>
         </ng-container>
 

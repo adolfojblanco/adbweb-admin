@@ -15,6 +15,10 @@ export class NewInvoiceComponent {
   showDropdown = signal(false);
   searchInput = signal<string>('');
 
+  onSearch(query: string) {
+    console.log(query);
+  }
+
 
   searchCustomer() {
     const search = this.searchInput().trim();

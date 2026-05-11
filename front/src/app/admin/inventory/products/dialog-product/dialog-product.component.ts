@@ -52,8 +52,6 @@ export class DialogProductComponent implements OnInit {
     })
   }
 
-
-
   public productForm: FormGroup = this.fb.group({
     id: [null],
     name: ['', [Validators.required, Validators.minLength(3)]],
@@ -62,7 +60,7 @@ export class DialogProductComponent implements OnInit {
     cost_price: ['', [Validators.required, Validators.min(0)]],
     category: ['', [Validators.required]],
     tax: ['', [Validators.required]],
-    active: [true]
+    is_active: [true]
   })
 
 

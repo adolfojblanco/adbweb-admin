@@ -1,6 +1,4 @@
 from django.db import models
-from django.db.models import Sum
-
 from apps.company.models import Company
 from apps.accounts.models import CustomerUser
 from apps.catalogs.models import Tax
@@ -12,6 +10,24 @@ import datetime
 
 # Modelos de facturación
 
+class Supplier(TimeStampedModel):
+    """Modelo Suplidor"""
+    name = models.CharField(max_length=100, unique=True, blank=False, null=False, verbose_name="Nombre")
+    phone = models.CharField(max_length=11, unique=True, blank=True, null=True, verbose_name="Teléfono")
+    email = models.EmailField(max_length=254, unique=True, blank=True, null=True, verbose_name="Correo")
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.strip()
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name_plural = "Suplidores"
+        verbose_name = "Suplidor"
+
+    def __str__(self):
+        return self.name
+
+
 class PaymentMethod(TimeStampedModel):
     """Metodos de pago"""
     name = models.CharField(max_length=100, verbose_name="Metodo de Pago")
@@ -22,8 +38,8 @@ class PaymentMethod(TimeStampedModel):
 
     class Meta:
         ordering = ['-name']
-        verbose_name_plural = "Metodos de pago"
-        verbose_name = "Metodo de pago"
+        verbose_name_plural = "Métodos de pago"
+        verbose_name = "Método de pago"
 
     def __str__(self):
         return self.name

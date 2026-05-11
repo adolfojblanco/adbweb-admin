@@ -1,11 +1,12 @@
-from .serializers import PaymentMethodsSerializer
-
-# Views for billing.
+from .serializers import PaymentMethodsSerializer, SupplierSerializer
 from apps.core.views import CoreModelViewSet
 from rest_framework import viewsets
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .models import PaymentMethod
+from .models import PaymentMethod, Supplier
 from apps.core.permissions import IsAdminUser
+
+# Views for billing.
+
 
 
 class PaymentMethodsViewSet(CoreModelViewSet):
@@ -14,3 +15,12 @@ class PaymentMethodsViewSet(CoreModelViewSet):
     search_fields = ["name"]
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
+
+
+class SupplierViewSet(CoreModelViewSet):
+    queryset = Supplier.objects.all().order_by("name")
+    serializer_class = SupplierSerializer
+    search_fields = ["name"]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminUser]
+
