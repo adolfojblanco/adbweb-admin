@@ -10,7 +10,6 @@ import { RouterOutlet } from '@angular/router';
 export class InvoiceComponent implements OnInit {
 
   ngOnInit(): void {
-    console.log('HOla');
   }
 
 }

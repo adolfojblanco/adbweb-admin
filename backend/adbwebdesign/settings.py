@@ -88,6 +88,19 @@ REST_FRAMEWORK = {
     ),
 }
 
+# --- CONFIGURACIÓN DE SWAGGER (drf-yasg) ---
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': "Ingresa tu token JWT en este formato: Bearer {tu_token_aqui}"
+        }
+    },
+    'USE_SESSION_AUTH': False, # Desactiva el login por defecto de Django en la vista de Swagger
+}
+
 WSGI_APPLICATION = 'adbwebdesign.wsgi.application'
 
 # Database

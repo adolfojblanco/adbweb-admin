@@ -13,8 +13,8 @@ import datetime
 class Supplier(TimeStampedModel):
     """Modelo Suplidor"""
     name = models.CharField(max_length=100, unique=True, blank=False, null=False, verbose_name="Nombre")
-    phone = models.CharField(max_length=11, unique=True, blank=True, null=True, verbose_name="Teléfono")
-    email = models.EmailField(max_length=254, unique=True, blank=True, null=True, verbose_name="Correo")
+    phone = models.CharField(max_length=11, blank=True, null=True, verbose_name="Teléfono")
+    email = models.EmailField(max_length=254, blank=True, null=True, verbose_name="Correo")
 
     def save(self, *args, **kwargs):
         self.name = self.name.strip()

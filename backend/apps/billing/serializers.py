@@ -11,4 +11,4 @@ class PaymentMethodsSerializer(serializers.ModelSerializer):
 class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Supplier
-        fields = ['id', 'name', 'email', 'is_active']
+        fields = ['id', 'name', 'phone', 'email', 'is_active']

@@ -1,59 +1,90 @@
-import { Component, effect, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, inject, signal, ViewChild, viewChild } from '@angular/core';
 import { MaterialModule } from '../../shared/material/material.module';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
 import { IsActivePipe } from '../../../pipes/is-active.pipe';
+import { SuppliersService } from '../../../services/suppliers.service';
+import { Supplier } from '../../../models/suppliers';
+import * as bootstrap from 'bootstrap';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { email } from '@angular/forms/signals';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-supplier',
-  imports: [MaterialModule, IsActivePipe],
+  imports: [MaterialModule, IsActivePipe, ReactiveFormsModule],
   templateUrl: './supplier.component.html',
   styles: ``,
 })
 export class SupplierComponent {
-// supplierService = inject(SupplierService);
-
-  // 1. Definimos las columnas exactas de tu modelo Django + Acciones
-  displayedColumns: string[] = ['name', 'phone', 'email', 'actions'];
-
-  // 2. El Signal que recibe los datos crudos de tu base de datos
-  suppliers = signal<any[]>([]);
-
-  // 3. El DataSource especial para que Angular Material pueda paginar y filtrar
-  dataSource = new MatTableDataSource<any>([]);
-
-  // 4. Capturamos el Paginador del HTML
-  paginator = viewChild(MatPaginator);
-
-  constructor() {
-    // 5. El Effect que mantiene sincronizada la tabla con el Signal
-    effect(() => {
-      this.dataSource.data = this.suppliers();
-
-      const pag = this.paginator();
-      if (pag) {
-        this.dataSource.paginator = pag;
-      }
-    });
-  }
+  @ViewChild('supplierModal') modalElement!: ElementRef;
+  private toast = inject(HotToastService);
+  private fb = inject(FormBuilder)
+  supplierService = inject(SuppliersService);
+  suppliers = signal<Supplier[]>([])
+  modalInstance: any;
+  modalTitle = signal('')
+  displayedColumns: string[] = ['name', 'phone', 'email', 'is_active', 'actions'];
 
   ngOnInit() {
-    // Aquí llamarías a tu backend:
-    // this.supplierService.getAll().subscribe(res => this.suppliers.set(res));
-
-    // Datos de prueba para que veas la tabla funcionando inmediatamente
-    this.suppliers.set([
-      { id: 1, name: 'Valento Textil', phone: '600123456', email: 'contacto@valento.es' },
-      { id: 2, name: 'Suministros XYZ', phone: '600987654', email: 'ventas@xyz.com' },
-      { id: 3, name: 'Papelera Nacional', phone: '', email: '' } // Simula los blank=True
-    ]);
+    this.getSuppliers()
   }
 
-  newSupplier() {
-    console.log('Abrir modal o ir a ruta de crear');
+  getSuppliers() {
+    this.supplierService.getAllSuppliers().subscribe((res:Supplier[]) => {
+      this.suppliers.set(res)
+    })
   }
 
-  editSupplier(supplier: any) {
-    console.log('Editar', supplier);
+  newSupplier() : void{
+   this.openModalSupplier('Nuevo Proveedor:');
+   this.supplierForm.reset();
+  }
+
+  editSupplier(supplier: Supplier) {
+    this.supplierForm.reset(supplier)
+    this.openModalSupplier('Edición de proveedor:')
+  }
+
+  supplierForm: FormGroup = this.fb.group({
+    id: [null],
+    name: ['', [Validators.required]],
+    email: ['', [Validators.email]],
+    phone: ['',],
+    is_active: [false]
+  })
+
+  onSubmit(){
+    if (this.supplierForm.invalid) {
+      this.supplierForm.markAllAsTouched();
+      return
+    }
+    const supplier: Supplier = this.supplierForm.value;
+
+    if (supplier.id != null) {
+      this.supplierService.editSupplier(supplier).subscribe((res) => {
+        this.suppliers.update((prev) => prev.map(item => item.id === supplier.id ? supplier: item))
+        this.toast.success(`${supplier.name}, se a editado correctamente`);
+        this.closeModalSupplier();
+      })
+    }else{
+      this.supplierService.newSupplier(supplier).subscribe((res) => {
+        this.toast.success(`${supplier.name}, se a registrado correctamente`);
+        this.suppliers.update((prev) => [...prev, supplier])
+        this.closeModalSupplier()
+      })
+    }
+  }
+
+  openModalSupplier(title: string) {
+    this.modalTitle.set(title)
+    this.modalInstance = new bootstrap.Modal(this.modalElement.nativeElement);
+    this.modalInstance.show();
+  }
+
+  closeModalSupplier() {
+    if (this.modalInstance) {
+      this.modalTitle.set('');
+      this.supplierForm.reset();
+      this.modalInstance.hide();
+    }
   }
 }
