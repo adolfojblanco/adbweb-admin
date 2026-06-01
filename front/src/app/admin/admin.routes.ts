@@ -1,7 +1,6 @@
 import { Routes } from "@angular/router";
 import { AdminComponent } from "./admin.component";
-
-
+import { DesktopComponent } from "./desktop/desktop.component";
 
 
 export const adminRoutes: Routes = [
@@ -9,6 +8,10 @@ export const adminRoutes: Routes = [
     path: '',
     component: AdminComponent,
     children: [
+      {
+        path: '',
+        component: DesktopComponent
+      },
       {
         path: 'inventory',
         loadChildren: () => import('./inventory/inventory.routes')

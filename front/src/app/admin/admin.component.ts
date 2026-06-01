@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { NavBarComponent } from "./shared/nav-bar/nav-bar.component";
 
 

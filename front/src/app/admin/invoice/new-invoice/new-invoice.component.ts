@@ -1,12 +1,10 @@
 import { ProductsService } from './../../../services/products.service';
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { MaterialModule } from '../../shared/material/material.module';
 import { Product } from '../../../models/product';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { preserveWhitespacesDefault } from '@angular/compiler';
-import { findInputsOnElementWithAttr } from '@angular/cdk/schematics';
 
 @Component({
   selector: 'app-new-invoice',
@@ -27,7 +25,6 @@ export class NewInvoiceComponent implements OnInit {
   ngOnInit() {
 
   }
-
 
   onSearch(query: string) {
     if(!query.trim()) return; // si esta vacio no buscamos

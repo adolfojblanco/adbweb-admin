@@ -25,7 +25,12 @@ export const invoiceRoutes: Routes = [
         component: SupplierComponent
       }
     ]
+  },
+  {
+    path: '**',
+    redirectTo: ''
   }
+
 ]
 
 
