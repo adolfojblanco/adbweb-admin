@@ -6,6 +6,7 @@ import { provideHotToastConfig } from '@ngxpert/hot-toast';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { errorInterceptor } from './interceptor/error.interceptor';
 import { authInterceptor } from './interceptor/auth.interceptor';
+import { MAT_ICON_DEFAULT_OPTIONS } from '@angular/material/icon';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,6 +16,10 @@ export const appConfig: ApplicationConfig = {
         errorInterceptor
       ])
     ),
+    {
+      provide: MAT_ICON_DEFAULT_OPTIONS,
+      useValue: { fontSet: 'material-symbols-outlined' }
+    },
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideHotToastConfig({
       position: 'top-right',
