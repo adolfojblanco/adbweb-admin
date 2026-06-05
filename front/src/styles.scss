@@ -30,6 +30,13 @@ html {
     )
   );
 
+  @include mat.toolbar-overrides(
+    (
+      container-background-color: $blue,
+      container-text-color: white,
+    )
+  );
+
   @include mat.dialog-theme(
     (
       border-radius: 5px,
@@ -51,6 +58,12 @@ html {
       )
     );
   }
+
+  @include mat.icon-overrides(
+    (
+      color: white,
+    )
+  );
 
   .btn-warning {
     @include mat.button-overrides(
@@ -115,4 +128,19 @@ body {
 
 .inline-form-fields mat-form-field + mat-form-field {
   margin-left: 8px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.container {
+  margin-top: 80px;
+}
+
+.modal {
+  background: rgba(0, 0, 0, 0.5);
+}
+.modal-backdrop {
+  display: none;
 }

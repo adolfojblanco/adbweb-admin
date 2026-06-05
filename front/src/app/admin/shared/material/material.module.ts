@@ -24,11 +24,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CommonModule } from '@angular/common';
+import {MatMenuModule} from '@angular/material/menu';
+
 
 
 
 @NgModule({
   exports: [
+    MatMenuModule,
     MatDividerModule,
     MatButtonModule,
     MatToolbarModule,

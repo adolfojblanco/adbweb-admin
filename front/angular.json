@@ -41,11 +41,11 @@
               }
             ],
             "styles": [
-              "node_modules/animate.css/animate.min.css",
+              "node_modules/animate.css/animate.min.css",ng serve 
               "src/styles.scss"
             ],
             "scripts": [
-             
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ]
           },
           "configurations": {
