@@ -1,18 +1,20 @@
+import { Customer } from './customer';
+import { Role } from './role.enum';
+
 export interface User {
-  id?: number;
+  id: number;
+
+  username: string;
+  email: string;
+
   first_name: string;
   last_name: string;
-  username: string;
-  password: string;
-  role: string;
-  is_active: boolean;
-  is_staff: boolean;
-  access_token?: string;
-  token?: string;
-}
 
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  SELLER = 'SELLER',
-  CLIENT = 'CLIENT'
+  role: Role;
+
+  customer?: Customer | null;
+
+  is_admin?: boolean;
+  is_seller?: boolean;
+  is_client?: boolean;
 }

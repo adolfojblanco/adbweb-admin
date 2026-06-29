@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.catalogs.models import Product, Category, Tax, Service, ContractedService
+from apps.catalogs.models import Product, Category, Tax, Service
 
 
 @admin.register(Category)
@@ -31,10 +31,3 @@ class TaxAdmin(admin.ModelAdmin):
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ('name', 'base_price', 'tax_percentage', 'is_active')
     list_editable = ('is_active',)
-
-@admin.register(ContractedService)
-class ContractedServiceAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'service', 'status', 'start_date', 'monthly_fee')
-    list_filter = ('status', 'service')
-    search_fields = ('customer__billing_name', 'service__name')
-

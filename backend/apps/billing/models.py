@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import Sum
 
 from apps.company.models import Company
-from apps.accounts.models import CustomerUser
+from apps.accounts.models import Customer
 from apps.catalogs.models import Tax, Product
 from apps.core.models import TimeStampedModel
 from django.conf import settings
@@ -72,7 +72,7 @@ class Invoice(TimeStampedModel):
     notes = models.TextField(blank=True, help_text="Términos y condiciones o notas para el cliente")
 
     # Relaciones
-    customer = models.ForeignKey(CustomerUser, on_delete=models.RESTRICT, related_name='invoices')
+    customer = models.ForeignKey(Customer, on_delete=models.RESTRICT, related_name='invoices')
     seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT, related_name='sales')
     company = models.ForeignKey(
         Company,

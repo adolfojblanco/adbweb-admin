@@ -21,8 +21,8 @@ export const adminRoutes: Routes = [
         loadChildren: () => import('./invoice/invoice.routes')
       },
       {
-        path: 'clients',
-        loadChildren: () => import('./clients/clients.routes')
+        path: 'customers',
+        loadChildren: () => import('./customers/customers.routes')
       },
     ]
   },

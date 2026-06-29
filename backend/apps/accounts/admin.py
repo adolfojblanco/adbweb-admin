@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.accounts.models import User, CustomerUser
+from apps.accounts.models import User, Customer
 
 
 # Register your models here.
@@ -10,7 +10,7 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = ('role', 'is_staff')
     search_fields = ('username', 'first_name', 'last_name', 'email')
 
-@admin.register(CustomerUser)
+@admin.register(Customer)
 class CustomerUserAdmin(admin.ModelAdmin):
     list_display = ('billing_name', 'tax_id', 'customer_type', 'contact_email')
     list_filter = ('customer_type',)

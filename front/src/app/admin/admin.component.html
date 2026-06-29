@@ -36,12 +36,12 @@
       </mat-list-item>
 
       <mat-menu #clientesMenu="matMenu" xPosition="after">
-        <button mat-menu-item (click)="sidenav.toggle()" routerLink="/admin/clients/new" routerLinkActive="active">
+        <button mat-menu-item (click)="sidenav.toggle()" routerLink="/admin/customers/new" routerLinkActive="active">
           <mat-icon>person_add</mat-icon>
           <span>Nuevo Cliente</span>
         </button>
 
-        <button mat-menu-item (click)="sidenav.toggle()" routerLink="/admin/clients/lists" routerLinkActive="active">
+        <button mat-menu-item (click)="sidenav.toggle()" routerLink="/admin/customers/lists" routerLinkActive="active">
           <mat-icon>list</mat-icon>
           <span>Ver Todos</span>
         </button>

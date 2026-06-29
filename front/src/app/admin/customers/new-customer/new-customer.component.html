@@ -1,0 +1,75 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <h4 class="card-title"><i class="bi bi-people-fill"></i> Nuevo Cliente</h4>
+    </div>
+  </div>
+</div>
+
+<div class="card animate__animated animate__fadeIn">
+  <div class="card-body">
+    <form [formGroup]="customerForm" class="grid" (ngSubmit)="submit()">
+
+      <mat-form-field class="full-width">
+        <mat-label>Tipo de cliente</mat-label>
+        <mat-select formControlName="customer_type">
+          <mat-option value="PERSON">Autónomo / Particular</mat-option>
+          <mat-option value="COMPANY">Empresa</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>Nombre comercial / Razón social</mat-label>
+        <input matInput formControlName="billing_name">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>CIF / NIF / NIE</mat-label>
+        <input matInput formControlName="tax_id">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Email de facturación</mat-label>
+        <input matInput formControlName="contact_email">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Teléfono</mat-label>
+        <input matInput formControlName="phone">
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>Dirección</mat-label>
+        <input matInput formControlName="address">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Ciudad</mat-label>
+        <input matInput formControlName="city">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Provincia</mat-label>
+        <input matInput formControlName="province">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Código postal</mat-label>
+        <input matInput formControlName="postal_code">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>País</mat-label>
+        <input matInput formControlName="country">
+      </mat-form-field>
+
+      <div class="full-width actions d-flex justify-content-end gap-2">
+        <button mat-button type="button" (click)="resetForm()">Cancelar</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="customerForm.invalid">
+          Guardar cliente
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
