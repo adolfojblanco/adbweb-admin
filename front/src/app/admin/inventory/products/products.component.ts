@@ -35,7 +35,9 @@ export class ProductsComponent implements OnInit {
       width: '600px'
     })
     dialogRef.afterClosed().subscribe((result) => {
-      this.products.update(prev => [...prev, result])
+      if (result) {
+        this.products.update(prev => [...prev, result])
+      }
     })
   }
 
@@ -45,6 +47,7 @@ export class ProductsComponent implements OnInit {
       data: product
     });
     dialogRef.afterClosed().subscribe((result) => {
+      console.log(result)
       if (result) {
         this.products.update(list =>
           list.map(p => p.id === result.id ? result : p)

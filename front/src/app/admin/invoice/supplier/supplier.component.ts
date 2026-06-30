@@ -62,12 +62,12 @@ export class SupplierComponent {
     if (supplier.id != null) {
       this.supplierService.editSupplier(supplier).subscribe((res) => {
         this.suppliers.update((prev) => prev.map(item => item.id === supplier.id ? supplier: item))
-        this.toast.success(`${supplier.name}, se a editado correctamente`);
+        this.toast.success(`${supplier.name}, editado correctamente`);
         this.closeModalSupplier();
       })
     }else{
       this.supplierService.newSupplier(supplier).subscribe((res) => {
-        this.toast.success(`${supplier.name}, se a registrado correctamente`);
+        this.toast.success(`${supplier.name}, registrado correctamente`);
         this.suppliers.update((prev) => [...prev, supplier])
         this.closeModalSupplier()
       })
