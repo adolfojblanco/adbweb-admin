@@ -1,9 +1,11 @@
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.catalogs.models import Category, Tax, Product
 from .serializers import CategorySerializer, TaxSerializer, ProductSerializer
-from apps.core.permissions import IsSellerUser, IsAdminUser
+from apps.core.permissions import IsAdminUser
 
 
 # Create your views here.
@@ -14,6 +16,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
     ordering_fields = ["name"]
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
+
+    @action(detail=False, methods=["get"], url_path="active")
+    def active(self, request):
+        categories = self.queryset.filter(is_active=True)
+        serializer = self.get_serializer(categories, many=True)
+        return Response(serializer.data)
 
 
 class TaxViewSet(viewsets.ModelViewSet):

@@ -28,7 +28,10 @@ urlpatterns = [
 
     # Inventories
     path('api/', include(('apps.catalogs.urls', 'catalogs'))),
+
+    # Billings
     path('api/', include(('apps.billing.urls', 'billings'))),
+
 
 
     # Docu routes
