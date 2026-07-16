@@ -26,7 +26,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   loadCategories() {
-    this.catService.loadCategories().subscribe(res => {this.categories.set(res) });
+    this.catService.loadCategories().subscribe(res => { this.categories.set(res), console.log(res) });
   }
 
   /** Add a new Category */

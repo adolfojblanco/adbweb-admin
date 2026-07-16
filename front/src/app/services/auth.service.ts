@@ -1,11 +1,12 @@
 import { HotToastService } from '@ngxpert/hot-toast';
 import { computed, inject, Injectable, signal } from '@angular/core';
 
-import { catchError, Observable, pipe, tap, throwError } from 'rxjs';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 import { User } from '../models/user';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { Client } from '../models/client';
 
 @Injectable({
   providedIn: 'root'
@@ -57,7 +58,7 @@ export class AuthService {
     this.router.navigate(['/auth/login']);
   }
 
-  customerSearch(search: string): Observable<User[]> {
-    return this.http.get<User[]>(`${this.urlEndPoint}/customers/search/?search=${search}`);
+  customerSearch(search: string): Observable<Client[]> {
+    return this.http.get<Client[]>(`${this.urlEndPoint}/customers/search/?search=${search}`);
   }
 }

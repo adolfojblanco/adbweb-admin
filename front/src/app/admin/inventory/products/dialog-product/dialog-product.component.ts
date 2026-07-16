@@ -41,7 +41,7 @@ export class DialogProductComponent implements OnInit {
   }
 
   loadCategories() {
-    this.categoryService.loadCategories().subscribe((res) => {
+    this.categoryService.loadActiveCategories().subscribe((res) => {
       this.categories.set(res)
     })
   }

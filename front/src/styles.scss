@@ -59,12 +59,6 @@ html {
     );
   }
 
-  @include mat.icon-overrides(
-    (
-      color: white,
-    )
-  );
-
   .btn-warning {
     @include mat.button-overrides(
       (
@@ -73,6 +67,14 @@ html {
       )
     );
   }
+}
+
+mat-toolbar {
+  @include mat.icon-overrides(
+    (
+      color: white,
+    )
+  );
 }
 
 body {

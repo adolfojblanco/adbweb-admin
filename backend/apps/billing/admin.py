@@ -1,89 +1,103 @@
 from django.contrib import admin
-from .models import PaymentMethod, Invoice, Supplier, InvoiceItem
+from django.http import HttpResponseRedirect
+from django.utils.safestring import mark_safe
 
-
-@admin.register(PaymentMethod)
-class PaymentMethodAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_active')
-    search_fields = ('name',)
-    list_editable = ('is_active',)
+from apps.billing.models import Invoice, InvoiceLine, Supplier, PaymentMethod
 
 
 @admin.register(Supplier)
 class SupplierAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'email', 'is_active')
-    readonly_fields = ('created_by', 'updated_by',)
-    search_fields = ('name', 'phone')
-
-    def save_model(self, request, obj, form, change):
-        # Si el objeto no tiene ID en la base de datos (change es False), es una CREACIÓN
-        if not change:
-            obj.created_by = request.user
-
-        # Sin importar si es creación o edición, SIEMPRE actualizamos el updated_by
-        obj.updated_by = request.user
-
-        # Llamar al save_model original para que continúe su curso y guarde
-        super().save_model(request, obj, form, change)
+    list_display = ('name', 'email', 'phone', 'created_at')
+    search_fields = ('name', 'email', 'phone')
+    ordering = ('name',)
 
 
-# 1. El Inline: Permite editar los Ítems dentro de la vista de la Factura
-class InvoiceItemInline(admin.TabularInline):
-    model = InvoiceItem
-    extra = 1  # Muestra 1 fila vacía por defecto para agregar un nuevo producto
-    readonly_fields = ('subtotal',)  # Protegemos el subtotal de la línea
-
-    # Ordenamos las columnas para que sea intuitivo como un Punto de Venta
-    fields = ('product', 'product_name', 'quantity', 'unit_price', 'discount', 'subtotal')
-
-    # Autocomplete para que buscar productos no colapse si tienes miles de registros
-    autocomplete_fields = ['product']
+@admin.register(PaymentMethod)
+class PaymentMethodAdmin(admin.ModelAdmin):
+    list_display = ('name', 'is_active', 'created_at')
+    search_fields = ('name',)
+    ordering = ('name',)
 
 
-# 2. El Admin Principal de la Factura
+class InvoiceLineInline(admin.TabularInline):
+    model = InvoiceLine
+    extra = 1
+    autocomplete_fields = ('product',)
+    readonly_fields = ('line_subtotal', 'tax_amount', 'line_total')
+
+
+class DocumentTypeFilter(admin.SimpleListFilter):
+    title = 'Tipo de documento'
+    parameter_name = 'document_type'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('BUDGET', 'Presupuestos'),
+            ('INVOICE', 'Facturas'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(document_type=self.value())
+        return queryset
+
+
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-    # Qué columnas ver en la lista general
-    list_display = ('number', 'document_type', 'customer', 'status', 'issue_date', 'total')
+    change_form_template = 'admin/billing/invoice/change_form.html'
+    list_display = ('invoice_number', 'document_type_badge', 'customer', 'issue_date', 'due_date', 'status', 'total')
+    list_filter = (DocumentTypeFilter, 'status', 'issue_date')
+    search_fields = ('invoice_number', 'customer__billing_name', 'customer__tax_id', 'customer__contact_email')
+    autocomplete_fields = ('customer',)
+    readonly_fields = ('invoice_number', 'document_sequence', 'subtotal', 'tax_total', 'total', 'created_at', 'updated_at')
+    inlines = [InvoiceLineInline]
+    ordering = ('-issue_date', '-id')
+    actions = ['convert_selected_to_invoice']
 
-    # Filtros laterales muy útiles para contabilidad
-    list_filter = ('status', 'document_type', 'issue_date', 'company')
-
-    # Buscador (Ajusta 'customer__email' o 'customer__username' según tu modelo de usuario)
-    search_fields = ('number', 'customer__username', 'customer__first_name')
-
-    # Protegemos los campos autocalculados de la cabecera
-    readonly_fields = ('number', 'subtotal', 'tax_amount', 'total')
-
-    # Conectamos las líneas de detalle
-    inlines = [InvoiceItemInline]
-
-    # Optimizamos consultas a la base de datos (evita el problema N+1)
-    select_related = ('customer', 'seller', 'company', 'tax')
-    autocomplete_fields = ['customer', 'seller', 'company']
-
-    # Agrupamos los campos en secciones elegantes en la vista de detalle
     fieldsets = (
-        ('Información del Documento', {
-            'fields': (
-                ('document_type', 'number'),
-                ('issue_date', 'due_date'),
-                'status'
-            )
+        ('Datos de factura', {
+            'fields': ('invoice_number', 'document_type', 'document_sequence', 'customer', 'issue_date', 'due_date', 'status', 'notes')
         }),
-        ('Partes Involucradas', {
-            'fields': (
-                ('company', 'tax'),
-                ('customer', 'seller'),
-            )
+        ('Totales', {
+            'fields': ('subtotal', 'tax_total', 'total')
         }),
-        ('Totales (Autocalculados por el sistema)', {
-            'fields': (
-                ('subtotal', 'tax_amount', 'total'),
-            ),
-            'classes': ('collapse',)  # Mantiene esta sección colapsada por defecto para limpiar la vista
-        }),
-        ('Información Adicional', {
-            'fields': ('notes',)
+        ('Auditoría', {
+            'fields': ('created_at', 'updated_at')
         }),
     )
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        form.instance.recalculate_totals()
+
+    @admin.display(description='Tipo', ordering='document_type')
+    def document_type_badge(self, obj):
+        if obj.document_type == obj.DocumentType.INVOICE:
+            return mark_safe(
+                '<span style="padding:2px 8px;border-radius:999px;background:#0d6efd;color:white;font-size:12px;">Factura</span>'
+            )
+
+        return mark_safe(
+            '<span style="padding:2px 8px;border-radius:999px;background:#6c757d;color:white;font-size:12px;">Presupuesto</span>'
+        )
+
+    @admin.action(description='Convertir presupuestos a factura')
+    def convert_selected_to_invoice(self, request, queryset):
+        converted = 0
+
+        for invoice in queryset:
+            if invoice.document_type != invoice.DocumentType.INVOICE:
+                invoice.document_type = invoice.DocumentType.INVOICE
+                invoice.save()
+                converted += 1
+
+        self.message_user(request, f'{converted} documento(s) convertidos a factura.')
+
+    def response_change(self, request, obj):
+        if '_convert_to_invoice' in request.POST and obj.document_type != obj.DocumentType.INVOICE:
+            obj.document_type = obj.DocumentType.INVOICE
+            obj.save()
+            self.message_user(request, 'Documento convertido a factura correctamente.')
+            return HttpResponseRedirect(request.path)
+
+        return super().response_change(request, obj)

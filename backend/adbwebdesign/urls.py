@@ -1,8 +1,10 @@
 """
 URL configuration for adbwebdesign project.
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
+from django.views.static import serve
 from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
@@ -28,8 +30,20 @@ urlpatterns = [
 
     # Inventories
     path('api/', include(('apps.catalogs.urls', 'catalogs'))),
+
+    # Billings
     path('api/', include(('apps.billing.urls', 'billings'))),
 
+    # Core
+    path('api/', include(('apps.core.urls', 'core'))),
+
+    # El logo se guarda en STATIC_ROOT (vía staticfiles_storage).
+    # El dev server solo sirve desde STATICFILES_DIRS, así que exponemos
+    # /static/logo.png explícitamente desde STATIC_ROOT.
+    path('static/logo.png', serve, {
+        'document_root': settings.STATIC_ROOT,
+        'path': 'logo.png',
+    }),
 
     # Docu routes
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
