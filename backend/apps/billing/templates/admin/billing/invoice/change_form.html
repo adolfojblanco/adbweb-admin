@@ -1,0 +1,10 @@
+{% extends "admin/change_form.html" %}
+
+{% block submit_buttons_bottom %}
+  {{ block.super }}
+  {% if original and original.document_type != "INVOICE" %}
+    <div class="submit-row">
+      <input type="submit" name="_convert_to_invoice" value="Convertir a factura" class="default">
+    </div>
+  {% endif %}
+{% endblock %}

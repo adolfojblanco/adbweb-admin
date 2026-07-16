@@ -1,0 +1,72 @@
+<div class="card animate__animated animate__fadeIn" *ngIf="client(); else loadingTpl">
+  <div class="card-body">
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
+      <div>
+        <h3 class="card-title mb-1">{{ client()!.billing_name }}</h3>
+        <div class="text-muted">{{ client()!.tax_id }} · {{ customerTypeLabel() }}</div>
+      </div>
+      <div class="d-flex gap-2">
+        <a mat-raised-button color="primary" [routerLink]="['/admin/clients/edit', client()!.id]">
+          <mat-icon>edit</mat-icon>
+          Editar
+        </a>
+        <a mat-stroked-button routerLink="/admin/clients/lists">Volver al listado</a>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-md-4">
+        <div class="p-3 border rounded bg-light h-100">
+          <div class="text-muted small">Email de facturación</div>
+          <div class="fw-semibold">{{ client()!.contact_email }}</div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="p-3 border rounded bg-light h-100">
+          <div class="text-muted small">Teléfono</div>
+          <div class="fw-semibold">{{ client()!.phone || '—' }}</div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="p-3 border rounded bg-light h-100">
+          <div class="text-muted small">Usuario (login)</div>
+          <div class="fw-semibold">{{ client()!.user?.username || '—' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <h5 class="mb-3">Dirección fiscal</h5>
+    <div class="table-responsive border rounded mb-4">
+      <table class="table mb-0">
+        <tbody>
+          <tr>
+            <th class="bg-light" style="width: 25%;">Dirección</th>
+            <td>{{ client()!.address }}</td>
+          </tr>
+          <tr>
+            <th class="bg-light">Ciudad</th>
+            <td>{{ client()!.city }}</td>
+          </tr>
+          <tr>
+            <th class="bg-light">Provincia</th>
+            <td>{{ client()!.province }}</td>
+          </tr>
+          <tr>
+            <th class="bg-light">Código postal</th>
+            <td>{{ client()!.postal_code || '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="card animate__animated animate__fadeIn">
+    <div class="card-body text-center text-muted py-5">
+      Cargando datos del cliente...
+    </div>
+  </div>
+</ng-template>

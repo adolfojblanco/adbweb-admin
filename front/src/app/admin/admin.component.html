@@ -20,10 +20,13 @@
 
 
     <mat-nav-list>
-      <mat-list-item [routerLink]="'/admin/users/profile'" (click)="sidenav.toggle()">
+
+      @if (authService.currentUser()?.is_staff) {
+      <mat-list-item [routerLink]="'/admin/settings'" (click)="sidenav.toggle()" routerLinkActive="selected">
         <mat-icon matListItemIcon>settings</mat-icon>
         Ajustes
       </mat-list-item>
+      }
     </mat-nav-list>
 
     <mat-divider></mat-divider>

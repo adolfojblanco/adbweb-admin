@@ -1,1 +1,76 @@
-<p>new-client works!</p>
+<div class="card animate__animated animate__fadeIn">
+  <div class="card-body">
+    <h3 class="card-title mb-3">Nuevo Cliente</h3>
+
+    <form [formGroup]="clientForm" (ngSubmit)="submit()" class="row g-3">
+      <div class="col-12">
+        <mat-radio-group formControlName="customer_type" class="d-flex flex-wrap gap-3">
+          @for (type of customerTypeOptions; track type.value) {
+            <mat-radio-button [value]="type.value">{{ type.label }}</mat-radio-button>
+          }
+        </mat-radio-group>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Razón social / Nombre comercial</mat-label>
+          <input matInput formControlName="billing_name" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>CIF / NIF / NIE</mat-label>
+          <input matInput formControlName="tax_id" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Dirección</mat-label>
+          <input matInput formControlName="address" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Ciudad</mat-label>
+          <input matInput formControlName="city" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Provincia</mat-label>
+          <input matInput formControlName="province" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Código postal</mat-label>
+          <input matInput formControlName="postal_code" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Email de facturación</mat-label>
+          <input matInput formControlName="contact_email" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="phone" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 d-flex justify-content-end gap-2">
+        <button mat-stroked-button type="button" (click)="clientForm.reset({ customer_type: customerTypeOptions[0].value })">Limpiar</button>
+        <button mat-raised-button color="primary" type="submit">Guardar cliente</button>
+      </div>
+    </form>
+  </div>
+</div>

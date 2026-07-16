@@ -1,1 +1,71 @@
-<p>list-clients works!</p>
+<div class="card animate__animated animate__fadeIn">
+  <div class="card-body">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <h3 class="card-title mb-0">Clientes</h3>
+      <a mat-raised-button color="primary" routerLink="/admin/clients/new">
+        <mat-icon>add</mat-icon>
+        Nuevo cliente
+      </a>
+    </div>
+    <hr>
+
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="clients()">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef><strong>Id.</strong></th>
+          <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="billing_name">
+          <th mat-header-cell *matHeaderCellDef><strong>Cliente</strong></th>
+          <td mat-cell *matCellDef="let element">{{ element.billing_name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="tax_id">
+          <th mat-header-cell *matHeaderCellDef><strong>NIF / CIF</strong></th>
+          <td mat-cell *matCellDef="let element">{{ element.tax_id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="contact_email">
+          <th mat-header-cell *matHeaderCellDef><strong>Email</strong></th>
+          <td mat-cell *matCellDef="let element">{{ element.contact_email }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="phone">
+          <th mat-header-cell *matHeaderCellDef><strong>Teléfono</strong></th>
+          <td mat-cell *matCellDef="let element">{{ element.phone || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="user">
+          <th mat-header-cell *matHeaderCellDef><strong>Login</strong></th>
+          <td mat-cell *matCellDef="let element">{{ element.user?.username || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="text-center"><strong>Acciones</strong></th>
+          <td mat-cell *matCellDef="let element" class="text-center">
+            <a mat-button [routerLink]="['/admin/clients/detail', element.id]">
+              <mat-icon>visibility</mat-icon>
+              Ver
+            </a>
+            <a mat-button color="primary" [routerLink]="['/admin/clients/edit', element.id]">
+              <mat-icon>edit</mat-icon>
+              Editar
+            </a>
+            <button mat-button color="warn" (click)="deleteClient(element)">
+              <mat-icon>delete</mat-icon>
+              Eliminar
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div class="p-3 text-muted" *ngIf="!clients().length">
+        No hay clientes registrados.
+      </div>
+    </div>
+  </div>
+</div>

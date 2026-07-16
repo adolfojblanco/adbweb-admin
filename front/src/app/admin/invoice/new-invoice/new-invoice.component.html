@@ -1,135 +1,149 @@
-<!-- Contenedor Principal -->
-<div>
-  <mat-card class="mat-elevation-z4" style="border-radius: 8px; overflow: hidden; padding: 0;">
-
-    <!-- HEADER -->
-    <mat-card-header style="background-color: #3f51b5; color: white; padding: 20px; margin-bottom: 20px;">
-      <div mat-card-avatar
-        style="background-color: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-        <mat-icon>receipt</mat-icon>
+<div class="card animate__animated animate__fadeIn">
+  <div class="card-body">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h3 class="card-title mb-1">Nueva Factura</h3>
+        <small class="text-muted">Factura en borrador</small>
       </div>
-      <mat-card-title style="color: white; font-size: 1.5rem; margin-bottom: 4px;">Nueva Factura</mat-card-title>
-      <mat-card-subtitle style="color: #e0e0e0;">#INV-0001 | Estado: Borrador</mat-card-subtitle>
-    </mat-card-header>
+      <span class="badge bg-secondary">#INV-0001</span>
+    </div>
 
-    <mat-card-content style="padding: 0 24px;">
-
-      <!-- SECCIÓN: EMISIÓN (Datos del Cliente) -->
-      <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 32px;">
-
-        <!-- CLIENTE -->
-        <mat-form-field appearance="outline" style="flex: 1; min-width: 300px;">
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-lg-6 position-relative">
+        <mat-form-field appearance="outline" class="w-100">
           <mat-label>Cliente</mat-label>
-          <mat-icon matPrefix style="margin-right: 8px;">search</mat-icon>
-          <input matInput value="Empresa XYZ S.A." readonly>
-          <button mat-icon-button matSuffix title="Crear nuevo cliente">
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            matInput
+            [value]="searchInput()"
+            placeholder="Buscar por razón social, NIF o email"
+            (input)="searchCustomer(txtCustomer.value)"
+            #txtCustomer
+          />
+          <button mat-icon-button matSuffix type="button" title="Crear nuevo cliente" routerLink="/admin/clients/new">
             <mat-icon>person_add</mat-icon>
           </button>
         </mat-form-field>
 
-      </div>
-
-      <!-- TÍTULO DE DETALLES -->
-      <h3 style="color: #3f51b5; margin-bottom: 14px; font-weight: 500; font-size: 1.2rem;">Detalle de Productos</h3>
-
-      <!-- SECCIÓN: BUSCADOR DE PRODUCTOS PARA AGREGAR -->
-      <div
-        style="display: flex; gap: 16px; align-items: center; margin-bottom: 24px; background-color: #f8f9fa; padding: 16px; border-radius: 8px; border: 1px dashed #ccc;">
-
-        <mat-form-field appearance="outline" style="flex: 1; margin-bottom: -1.25em;">
-          <mat-label>Buscar producto por Código, SKU o Nombre...</mat-label>
-          <mat-icon matPrefix style="margin-right: 8px; color: #3f51b5;">qr_code_scanner</mat-icon>
-
-          <!-- Pasamos txtSearch al método selectedProduct para poder limpiarlo -->
-          <input matInput placeholder="Ej. Camiseta o SKU-001" (keyup.enter)="onSearch(txtSearch.value)" #txtSearch
-            [matAutocomplete]="auto">
-
-          <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption
-            (optionSelected)="selectedProduct($event, txtSearch)">
-            @for (product of products(); track product.id) {
-            <mat-option [value]="product">{{ product.name }}</mat-option>
+        @if (showDropdown() && customers().length > 0) {
+          <div class="list-group position-absolute w-100 shadow-sm" style="z-index: 10; top: 100%;">
+            @for (customer of customers(); track customer.id) {
+              <button type="button" class="list-group-item list-group-item-action" (click)="selectCustomer(customer)">
+                {{ customerLabel(customer) }}
+              </button>
             }
-          </mat-autocomplete>
-        </mat-form-field>
-
-        <button mat-raised-button color="primary" style="height: 56px; padding: 0 24px;">
-          <mat-icon>add_shopping_cart</mat-icon> Buscar
-        </button>
-
+          </div>
+        }
       </div>
 
-      <!-- SECCIÓN: TABLA DE PRODUCTOS (Maquetada estáticamente) -->
-      <div class="mat-elevation-z2" style="border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+      <div class="col-12 col-lg-6">
+        <div class="p-3 border rounded bg-light h-100">
+          <div class="text-muted small mb-1">Cliente seleccionado</div>
+          <div class="fw-semibold">
+            @if (selectedCustomer()) {
+              {{ customerLabel(selectedCustomer()!) }}
+            } @else {
+              Ninguno
+            }
+          </div>
+        </div>
+      </div>
+    </div>
 
-          <!-- Encabezados de Tabla -->
-          <thead>
-            <tr style="background-color: #f5f5f5; border-bottom: 1px solid #e0e0e0; height: 56px;">
-              <th style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87);">Código</th>
-              <th style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87);">Producto</th>
-              <th style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87); text-align: center;">Cantidad</th>
-              <th style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87); text-align: right;">P. Unitario
-              </th>
-              <th style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87); text-align: right;">Subtotal</th>
-              <th style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87); text-align: center;">Quitar</th>
+    <h5 class="mb-3 text-primary">Detalle de productos</h5>
+
+    <div class="p-3 rounded border bg-light mb-4">
+      <mat-form-field appearance="outline" class="w-100 mb-0">
+        <mat-label>Buscar producto por código, SKU o nombre</mat-label>
+        <mat-icon matPrefix>qr_code_scanner</mat-icon>
+        <input
+          matInput
+          placeholder="Ej. Camiseta o SKU-001"
+          (keyup.enter)="onSearch(productSearch.value)"
+          #productSearch
+          [matAutocomplete]="auto"
+        />
+
+        <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption (optionSelected)="selectedProduct($event, productSearch)">
+          @for (product of products(); track product.id) {
+            <mat-option [value]="product">{{ product.name }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+      <div class="text-muted small">Presiona Enter para buscar y luego selecciona un producto.</div>
+    </div>
+
+    <div class="table-responsive border rounded mb-4">
+      <table class="table mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Código</th>
+            <th>Producto</th>
+            <th class="text-center">Cantidad</th>
+            <th class="text-end">P. unitario</th>
+            <th class="text-end">Subtotal</th>
+            <th class="text-center">Quitar</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (invoiceProduct().length === 0) {
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">Agrega productos para construir la factura.</td>
             </tr>
-          </thead>
+          }
 
-          <!-- Cuerpo de la Tabla -->
-          <tbody>
-            <!-- Fila 1 -->
-            @for (p of invoiceProduct(); track p.id) {
-            <tr style="border-bottom: 1px solid #e0e0e0; height: 52px;">
-              <td style="padding: 0 16px;">
-                <span
-                  style="background: #e0e0e0; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;">{{p.sku}}</span>
+          @for (p of invoiceProduct(); track p.id) {
+            <tr>
+              <td><span class="badge text-bg-secondary">{{ p.sku }}</span></td>
+              <td>{{ p.name }}</td>
+              <td class="text-center" style="max-width: 120px;">
+                <input
+                  type="number"
+                  class="form-control form-control-sm text-center mx-auto"
+                  style="max-width: 80px;"
+                  [value]="p.quantity"
+                  min="1"
+                  (change)="updateQuantity(p.id, qty.valueAsNumber)"
+                  #qty
+                />
               </td>
-              <td style="padding: 0 16px; font-weight: 500; color: rgba(0,0,0,0.87);">{{p.name}}</td>
-              <td style="padding: 0 16px; text-align: center;">
-                <input type="number" value="1"
-                  style="width: 60px; text-align: center; padding: 6px; border: 1px solid #ccc; border-radius: 4px; outline: none;">
-              </td>
-              <td style="padding: 0 16px; text-align: right;">{{p.sale_price}}</td>
-              <td style="padding: 0 16px; text-align: right; font-weight: 500;">{{p.sale_price * 5}}</td>
-              <td style="padding: 0 16px; text-align: center;">
-                <button mat-icon-button color="warn">
+              <td class="text-end">{{ p.sale_price | number:'1.2-2' }}</td>
+              <td class="text-end fw-semibold">{{ billingService.lineSubtotal(p) | number:'1.2-2' }}</td>
+              <td class="text-center">
+                <button mat-icon-button color="warn" type="button" (click)="removeProduct(p.id)">
                   <mat-icon>delete</mat-icon>
                 </button>
               </td>
             </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+          }
+        </tbody>
+      </table>
+    </div>
 
-      <!-- SECCIÓN: TOTALES -->
-      <div style="display: flex; justify-content: flex-end; margin-top: 32px; margin-bottom: 16px;">
-        <div style="width: 320px; background: #f5f5f5; padding: 24px; border-radius: 8px; border: 1px solid #e0e0e0;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 12px; color: rgba(0,0,0,0.6);">
-            <span>Subtotal:</span> <b style="color: rgba(0,0,0,0.87);">$26.00</b>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 12px; color: rgba(0,0,0,0.6);">
-            <span>Impuestos (21%):</span> <b style="color: rgba(0,0,0,0.87);">$4.16</b>
-          </div>
-          <hr style="border: none; border-top: 1px solid #ddd; margin: 16px 0;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 18px; color: #3f51b5; font-weight: 500;">Total a Pagar:</span>
-            <b style="font-size: 28px; color: #3f51b5;">$30.16</b>
-          </div>
+    <div class="d-flex justify-content-end">
+      <div class="p-3 border rounded bg-light" style="min-width: 320px;">
+        <div class="d-flex justify-content-between mb-2">
+          <span>Subtotal</span>
+          <strong>{{ subtotal() | number:'1.2-2' }}</strong>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span>Impuestos</span>
+          <strong>{{ taxTotal() | number:'1.2-2' }}</strong>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between fs-5 text-primary">
+          <span>Total</span>
+          <strong>{{ total() | number:'1.2-2' }}</strong>
         </div>
       </div>
+    </div>
+  </div>
 
-    </mat-card-content>
-
-    <!-- FOOTER / ACCIONES -->
-    <mat-card-actions align="end"
-      style="padding: 16px 24px; border-top: 1px solid #e0e0e0; background-color: #fafafa; margin: 0;">
-      <button mat-button color="warn" style="margin-right: 8px;">Cancelar</button>
-      <button mat-raised-button color="primary">
-        <mat-icon>save</mat-icon> Guardar Factura
-      </button>
-    </mat-card-actions>
-
-  </mat-card>
-
+  <div class="card-footer d-flex justify-content-end gap-2">
+    <button mat-stroked-button type="button" color="warn">Cancelar</button>
+    <button mat-raised-button type="button" color="primary" (click)="saveInvoice()" [disabled]="!canSave()">
+      <mat-icon>save</mat-icon>
+      Guardar factura
+    </button>
+  </div>
 </div>

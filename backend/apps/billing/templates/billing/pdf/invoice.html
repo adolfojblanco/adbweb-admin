@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 1.5cm; }
+  body { font-family: Helvetica, Arial, sans-serif; font-size: 10pt; color: #1f2937; }
+  table { border-collapse: collapse; }
+  .logo { max-width: 140px; max-height: 70px; }
+  .company-name { font-size: 18pt; font-weight: bold; color: #0d6efd; margin-top: 8px; }
+  .company-info { font-size: 9pt; color: #6b7280; line-height: 1.4; margin-top: 4px; }
+  .doc-title { font-size: 18pt; font-weight: bold; color: #0d6efd; text-align: right; }
+  .doc-meta { font-size: 10pt; color: #6b7280; text-align: right; margin-top: 6px; line-height: 1.5; }
+  .doc-number { font-size: 13pt; font-weight: bold; color: #111827; }
+  .meta-table { width: 100%; margin: 15px 0; background-color: #f9fafb; border: 1px solid #e5e7eb; }
+  .meta-table td { padding: 8px 12px; width: 33.33%; vertical-align: top; border-right: 1px solid #e5e7eb; }
+  .meta-table td:last-child { border-right: none; }
+  .meta-label { font-size: 8pt; text-transform: uppercase; color: #6b7280; font-weight: bold; }
+  .meta-value { font-size: 11pt; color: #111827; font-weight: bold; margin-top: 2px; }
+  .customer-label { font-size: 8pt; text-transform: uppercase; color: #6b7280; font-weight: bold; margin-bottom: 4px; }
+  .customer-name { font-size: 12pt; font-weight: bold; color: #111827; }
+  .customer-info { font-size: 9pt; color: #6b7280; line-height: 1.5; margin-top: 2px; }
+  .lines { width: 100%; margin-top: 15px; }
+  .lines thead th { background-color: #0d6efd; color: white; padding: 8px; text-align: left; font-size: 9pt; }
+  .lines tbody td { padding: 7px 8px; border-bottom: 1px solid #e5e7eb; font-size: 10pt; }
+  .lines tbody tr.alt { background-color: #f9fafb; }
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .totals { width: 280px; margin-left: auto; margin-top: 15px; }
+  .totals td { padding: 4px 8px; font-size: 10pt; }
+  .totals .label { color: #6b7280; }
+  .totals .value { text-align: right; color: #1f2937; }
+  .totals .total-row td { border-top: 2px solid #e5e7eb; padding-top: 8px; font-size: 14pt; font-weight: bold; color: #0d6efd; }
+  .notes { background-color: #f9fafb; border-left: 4px solid #0d6efd; padding: 10px; margin-top: 20px; }
+  .notes-label { font-size: 8pt; text-transform: uppercase; color: #6b7280; font-weight: bold; margin-bottom: 4px; }
+  .notes-content { font-size: 9pt; color: #374151; }
+  .footer { margin-top: 30px; padding-top: 8px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 8pt; color: #6b7280; }
+</style>
+</head>
+<body>
+
+<table width="100%" style="border-bottom: 2px solid #0d6efd; padding-bottom: 10px;">
+  <tr>
+    <td style="width: 55%; vertical-align: top;">
+      {% if logo_path %}
+        <img src="{{ logo_path }}" class="logo" style="width: 180px;">
+      {% endif %}
+    </td>
+    <td style="width: 45%; vertical-align: top; text-align: right;">
+      <div class="doc-title">{{ document_label|upper }}</div>
+      <div class="doc-meta">
+        <span class="doc-number">{{ invoice.invoice_number }}</span><br>
+        Emisión: {{ invoice.issue_date|date:"d/m/Y" }}<br>
+        {% if invoice.due_date %}Vencimiento: {{ invoice.due_date|date:"d/m/Y" }}{% endif %}
+      </div>
+    </td>
+  </tr>
+</table>
+
+<div style="margin-top: 20px;">
+  <div class="customer-label">Facturar a</div>
+  <div class="customer-name">{{ invoice.customer.billing_name }}</div>
+  <div class="customer-info">
+    {{ invoice.customer.tax_id }}<br>
+    {{ invoice.customer.address }}<br>
+    {{ invoice.customer.postal_code }} {{ invoice.customer.city }}, {{ invoice.customer.province }}<br>
+    {{ invoice.customer.contact_email }}
+    {% if invoice.customer.phone %} · {{ invoice.customer.phone }}{% endif %}
+  </div>
+</div>
+
+<table class="lines">
+  <thead>
+    <tr>
+      <th>Descripción</th>
+      <th class="text-center" style="width: 50px;">Cant.</th>
+      <th class="text-right" style="width: 80px;">Precio</th>
+      <th class="text-right" style="width: 60px;">IVA</th>
+      <th class="text-right" style="width: 90px;">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for line in invoice.lines.all %}
+      <tr class="{% if forloop.counter0|divisibleby:2 %}alt{% endif %}">
+        <td>{{ line.description }}</td>
+        <td class="text-center">{{ line.quantity }}</td>
+        <td class="text-right">{{ line.unit_price }} €</td>
+        <td class="text-right">{{ line.tax_percentage }}%</td>
+        <td class="text-right">{{ line.line_total }} €</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<table class="totals">
+  <tr>
+    <td class="label">Subtotal:</td>
+    <td class="value">{{ invoice.subtotal }} €</td>
+  </tr>
+  <tr>
+    <td class="label">Impuestos:</td>
+    <td class="value">{{ invoice.tax_total }} €</td>
+  </tr>
+  <tr class="total-row">
+    <td>Total:</td>
+    <td class="text-right">{{ invoice.total }} €</td>
+  </tr>
+</table>
+
+{% if invoice.notes %}
+  <div class="notes">
+    <div class="notes-label">Observaciones</div>
+    <div class="notes-content">{{ invoice.notes }}</div>
+  </div>
+{% endif %}
+
+<div class="footer">
+  {{ company.name }} · {{ company.email_company }} · {{ company.phone }} · {% if company.website %} · {{ company.website }}{% endif %}
+</div>
+
+</body>
+</html>

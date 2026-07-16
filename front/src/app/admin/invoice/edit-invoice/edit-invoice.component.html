@@ -1,0 +1,134 @@
+<div class="card animate__animated animate__fadeIn">
+  <div class="card-body">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h3 class="card-title mb-1">Editar Presupuesto</h3>
+        <small class="text-muted">Actualiza cliente, productos y totales</small>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-lg-6 position-relative">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Cliente</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput [value]="searchInput()" placeholder="Buscar por razón social, NIF o email" (input)="searchCustomer(txtCustomer.value)" #txtCustomer />
+          <button mat-icon-button matSuffix type="button" title="Crear nuevo cliente" routerLink="/admin/clients/new">
+            <mat-icon>person_add</mat-icon>
+          </button>
+        </mat-form-field>
+
+        @if (showDropdown() && customers().length > 0) {
+          <div class="list-group position-absolute w-100 shadow-sm" style="z-index: 10; top: 100%;">
+            @for (customer of customers(); track customer.id) {
+              <button type="button" class="list-group-item list-group-item-action" (click)="selectCustomer(customer)">
+                {{ customerLabel(customer) }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <div class="p-3 border rounded bg-light h-100">
+          <div class="text-muted small mb-1">Cliente seleccionado</div>
+          <div class="fw-semibold">
+            @if (selectedCustomer()) {
+              {{ customerLabel(selectedCustomer()!) }}
+            } @else {
+              Ninguno
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h5 class="mb-3 text-primary">Detalle de productos</h5>
+
+    <div class="p-3 rounded border bg-light mb-4">
+      <mat-form-field appearance="outline" class="w-100 mb-0">
+        <mat-label>Buscar producto por código, SKU o nombre</mat-label>
+        <mat-icon matPrefix>qr_code_scanner</mat-icon>
+        <input matInput placeholder="Ej. Camiseta o SKU-001" (keyup.enter)="onSearch(productSearch.value)" #productSearch [matAutocomplete]="auto" />
+        <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption (optionSelected)="selectedProduct($event, productSearch)">
+          @for (product of products(); track product.id) {
+            <mat-option [value]="product">{{ product.name }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+      <div class="text-muted small">Presiona Enter para buscar y luego selecciona un producto.</div>
+    </div>
+
+    <div class="table-responsive border rounded mb-4">
+      <table class="table mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Código</th>
+            <th>Producto</th>
+            <th class="text-center">Cantidad</th>
+            <th class="text-end">P. unitario</th>
+            <th class="text-end">Subtotal</th>
+            <th class="text-center">Quitar</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (invoiceProduct().length === 0) {
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">Agrega productos para construir el presupuesto.</td>
+            </tr>
+          }
+
+          @for (p of invoiceProduct(); track p.id) {
+            <tr>
+              <td><span class="badge text-bg-secondary">{{ p.sku || 'SIN-SKU' }}</span></td>
+              <td>{{ p.name }}</td>
+              <td class="text-center" style="max-width: 120px;">
+                <input type="number" class="form-control form-control-sm text-center mx-auto" style="max-width: 80px;" [value]="p.quantity" min="1" (change)="updateQuantity(p.id, qty.valueAsNumber)" #qty />
+              </td>
+              <td class="text-end">{{ p.sale_price | number:'1.2-2' }}</td>
+              <td class="text-end fw-semibold">{{ billingService.lineSubtotal(p) | number:'1.2-2' }}</td>
+              <td class="text-center">
+                <button mat-icon-button color="warn" type="button" (click)="removeProduct(p.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <div class="p-3 border rounded bg-light" style="min-width: 320px;">
+        <div class="d-flex justify-content-between mb-2">
+          <span>Subtotal</span>
+          <strong>{{ subtotal() | number:'1.2-2' }}</strong>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span>Impuestos</span>
+          <strong>{{ taxTotal() | number:'1.2-2' }}</strong>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between fs-5 text-primary">
+          <span>Total</span>
+          <strong>{{ total() | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Observaciones</mat-label>
+        <textarea matInput rows="3" [value]="notes()" (input)="notes.set(txtNotes.value)" #txtNotes placeholder="Notas visibles para el cliente (aparecerán en el detalle y en el email)"></textarea>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="card-footer d-flex justify-content-end gap-2">
+    <button mat-stroked-button type="button" color="warn" routerLink="/admin/invoice/list-invoice">Cancelar</button>
+    <button mat-raised-button type="button" color="primary" (click)="saveInvoice()" [disabled]="!canSave()">
+      <mat-icon>save</mat-icon>
+      Guardar cambios
+    </button>
+  </div>
+</div>
