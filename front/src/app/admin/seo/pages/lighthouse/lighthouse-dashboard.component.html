@@ -1,0 +1,145 @@
+<div class="card animate__animated animate__fadeIn">
+  <div class="card-body">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h3 class="card-title mb-0">Lighthouse</h3>
+        <small class="text-muted">Métricas de Performance, Accessibility, SEO y Best Practices por página.</small>
+      </div>
+      <a mat-stroked-button [routerLink]="['/admin/seo/audit-detail', route.snapshot.paramMap.get('id')]">
+        <mat-icon>arrow_back</mat-icon>
+        Volver al detalle
+      </a>
+    </div>
+
+    @if (loading() && !results().length) {
+      <div class="text-center text-muted py-5">Cargando…</div>
+    } @else if (!results().length) {
+      <div class="text-center text-muted py-5">
+        <mat-icon class="d-block mx-auto mb-2" style="font-size: 2rem; height: 2rem; width: 2rem;">insights</mat-icon>
+        Aún no hay resultados de Lighthouse para esta auditoría.
+        <div class="mt-3 small">
+          Ejecuta Lighthouse desde la tabla de páginas (más abajo) o vuelve después del crawl.
+        </div>
+      </div>
+    } @else {
+      @if (latest(); as l) {
+        <section class="mb-4">
+          <h6 class="text-uppercase text-muted small fw-semibold mb-2">Último resultado</h6>
+          <div class="row g-3">
+            <div class="col-6 col-md-3">
+              <app-lh-score-card
+                [label]="categoryLabels.performance"
+                [value]="l.performance_score"
+              />
+            </div>
+            <div class="col-6 col-md-3">
+              <app-lh-score-card
+                [label]="categoryLabels.accessibility"
+                [value]="l.accessibility_score"
+              />
+            </div>
+            <div class="col-6 col-md-3">
+              <app-lh-score-card
+                [label]="categoryLabels.seo"
+                [value]="l.seo_score"
+              />
+            </div>
+            <div class="col-6 col-md-3">
+              <app-lh-score-card
+                [label]="categoryLabels.best_practices"
+                [value]="l.best_practices_score"
+              />
+            </div>
+          </div>
+
+          <div class="row g-3 mt-1">
+            <div class="col-6 col-md-4 col-xl-2">
+              <app-lh-metric-card metric="cls" [label]="metricLabels.cls" [value]="l.cls" />
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+              <app-lh-metric-card metric="lcp" [label]="metricLabels.lcp" [value]="l.lcp" />
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+              <app-lh-metric-card metric="inp" [label]="metricLabels.inp" [value]="l.inp" />
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+              <app-lh-metric-card metric="fcp" [label]="metricLabels.fcp" [value]="l.fcp" />
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+              <app-lh-metric-card metric="ttfb" [label]="metricLabels.ttfb" [value]="l.ttfb" />
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+              <app-lh-metric-card metric="speed_index" [label]="metricLabels.speed_index" [value]="l.speed_index" />
+            </div>
+          </div>
+
+          <div class="text-muted small mt-2">
+            Ejecutado el {{ l.run_at | date: 'short' }} con Lighthouse {{ l.lighthouse_version || '—' }}.
+            @if (l.error_message) {
+              <span class="text-danger ms-2">
+                <mat-icon style="font-size: 1rem; height: 1rem; width: 1rem; vertical-align: middle;">error_outline</mat-icon>
+                {{ l.error_message }}
+              </span>
+            }
+          </div>
+        </section>
+      }
+
+      <section>
+        <h6 class="text-uppercase text-muted small fw-semibold mb-2">Último resultado por página</h6>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Página</th>
+                <th class="text-end">Perf.</th>
+                <th class="text-end">Acces.</th>
+                <th class="text-end">SEO</th>
+                <th class="text-end">BP</th>
+                <th class="text-end">CLS</th>
+                <th class="text-end">LCP</th>
+                <th class="text-end">INP</th>
+                <th class="text-end">FCP</th>
+                <th class="text-end">TTFB</th>
+                <th class="text-end">Speed Idx</th>
+                <th class="text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (entry of latestByPage() | keyvalue; track entry.key) {
+                <tr>
+                  <td class="text-truncate" style="max-width: 280px;">{{ entry.value.page_url }}</td>
+                  <td class="text-end">{{ entry.value.performance_score ?? '—' }}</td>
+                  <td class="text-end">{{ entry.value.accessibility_score ?? '—' }}</td>
+                  <td class="text-end">{{ entry.value.seo_score ?? '—' }}</td>
+                  <td class="text-end">{{ entry.value.best_practices_score ?? '—' }}</td>
+                  <td class="text-end">{{ entry.value.cls !== null ? (entry.value.cls | number: '1.2-3') : '—' }}</td>
+                  <td class="text-end">{{ entry.value.lcp !== null ? (entry.value.lcp | number: '1.0-0') + ' ms' : '—' }}</td>
+                  <td class="text-end">{{ entry.value.inp !== null ? (entry.value.inp | number: '1.0-0') + ' ms' : '—' }}</td>
+                  <td class="text-end">{{ entry.value.fcp !== null ? (entry.value.fcp | number: '1.0-0') + ' ms' : '—' }}</td>
+                  <td class="text-end">{{ entry.value.ttfb !== null ? (entry.value.ttfb | number: '1.0-0') + ' ms' : '—' }}</td>
+                  <td class="text-end">{{ entry.value.speed_index !== null ? (entry.value.speed_index | number: '1.0-0') + ' ms' : '—' }}</td>
+                  <td class="text-center">
+                    <button
+                      mat-stroked-button
+                      color="primary"
+                      [disabled]="running().has(entry.key)"
+                      (click)="runForPage(entry.key)"
+                    >
+                      <mat-icon>play_arrow</mat-icon>
+                      {{ running().has(entry.key) ? 'Encolado…' : 'Re-ejecutar' }}
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="12" class="text-center text-muted py-3">Sin páginas con Lighthouse.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  </div>
+</div>
