@@ -37,6 +37,9 @@ urlpatterns = [
     # Core
     path('api/', include(('apps.core.urls', 'core'))),
 
+    # SEO
+    path('api/seo/', include(('apps.seo.urls', 'seo'))),
+
     # El logo se guarda en STATIC_ROOT (vía staticfiles_storage).
     # El dev server solo sirve desde STATICFILES_DIRS, así que exponemos
     # /static/logo.png explícitamente desde STATIC_ROOT.

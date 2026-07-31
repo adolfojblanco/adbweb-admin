@@ -26,6 +26,10 @@ export const adminRoutes: Routes = [
         loadChildren: () => import('./clients/clients.routes')
       },
       {
+        path: 'seo',
+        loadChildren: () => import('./seo/routing/seo.routes')
+      },
+      {
         path: 'settings',
         loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent),
         canActivate: [staffGuard]
