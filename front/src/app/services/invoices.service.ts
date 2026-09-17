@@ -21,12 +21,29 @@ export class InvoicesService {
     return this.http.get<Invoice>(`${this.urlEndPoint}/${id}/`);
   }
 
-  createBudget(customer: Client, items: InvoiceLineItem[], totals: { subtotal: number; taxTotal: number; total: number }, notes?: string): Observable<Invoice> {
-    return this.http.post<Invoice>(`${this.urlEndPoint}/`, this.buildPayload(customer, items, notes));
+  createQuote(
+    customer: Client,
+    items: InvoiceLineItem[],
+    taxId: number,
+    notes?: string,
+    dueDate?: string | null,
+  ): Observable<Invoice> {
+    return this.http.post<Invoice>(`${this.urlEndPoint}/`, this.buildPayload(customer, items, taxId, notes, dueDate));
   }
 
-  updateBudget(id: number, customer: Client, items: InvoiceLineItem[], totals: { subtotal: number; taxTotal: number; total: number }, notes?: string): Observable<Invoice> {
-    return this.http.patch<Invoice>(`${this.urlEndPoint}/${id}/`, this.buildPayload(customer, items, notes));
+  updateQuote(
+    id: number,
+    customer: Client,
+    items: InvoiceLineItem[],
+    taxId: number,
+    notes?: string,
+    dueDate?: string | null,
+  ): Observable<Invoice> {
+    return this.http.patch<Invoice>(`${this.urlEndPoint}/${id}/`, this.buildPayload(customer, items, taxId, notes, dueDate));
+  }
+
+  issue(id: number): Observable<Invoice> {
+    return this.http.post<Invoice>(`${this.urlEndPoint}/${id}/issue/`, {});
   }
 
   setStatus(id: number, newStatus: string): Observable<Invoice> {
@@ -41,16 +58,24 @@ export class InvoicesService {
     return this.http.get(`${this.urlEndPoint}/${id}/pdf/`, { responseType: 'blob' });
   }
 
-  private buildPayload(customer: Client, items: InvoiceLineItem[], notes?: string) {
+  private buildPayload(
+    customer: Client,
+    items: InvoiceLineItem[],
+    taxId: number,
+    notes?: string,
+    dueDate?: string | null,
+  ) {
     return {
       customer: customer.id,
+      document_type: 'QUOTE',
+      tax: taxId,
       notes: notes ?? '',
-      lines: items.map((item) => ({
+      due_date: dueDate ?? null,
+      items: items.map((item) => ({
         product: item.id,
-        description: item.name,
         quantity: item.quantity,
         unit_price: item.sale_price,
-        tax_percentage: item.tax?.percentage ?? 0,
+        discount: 0,
       })),
     };
   }

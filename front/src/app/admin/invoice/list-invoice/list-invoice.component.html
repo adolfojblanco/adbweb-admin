@@ -12,16 +12,16 @@
 
     <div class="mat-elevation-z8">
       <table mat-table [dataSource]="invoices()">
-        <ng-container matColumnDef="invoice_number">
+        <ng-container matColumnDef="number">
           <th mat-header-cell *matHeaderCellDef><strong>Número</strong></th>
-          <td mat-cell *matCellDef="let element">{{ element.invoice_number }}</td>
+          <td mat-cell *matCellDef="let element">{{ element.number }}</td>
         </ng-container>
 
         <ng-container matColumnDef="document_type">
           <th mat-header-cell *matHeaderCellDef><strong>Tipo</strong></th>
           <td mat-cell *matCellDef="let element">
-            <span class="badge" [class.bg-secondary]="element.document_type === 'BUDGET'" [class.bg-primary]="element.document_type === 'INVOICE'">
-              {{ element.document_type === 'BUDGET' ? 'Presupuesto' : 'Factura' }}
+            <span class="badge" [class.bg-secondary]="isQuote(element)" [class.bg-primary]="!isQuote(element)">
+              {{ documentTypeLabel(element.document_type) }}
             </span>
           </td>
         </ng-container>
@@ -53,12 +53,7 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef class="text-center"><strong>Acciones</strong></th>
           <td mat-cell *matCellDef="let element" class="text-center">
-            @if (element.document_type === 'BUDGET') {
-              <button mat-button color="accent" [routerLink]="['/admin/invoice/editinvoice', element.id]">
-                Editar
-              </button>
-            }
-            @if (element.status === 'DRAFT') {
+            @if (isQuote(element)) {
               <button mat-button color="warn" (click)="presentInvoice(element)">
                 Presentar
               </button>

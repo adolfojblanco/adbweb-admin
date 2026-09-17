@@ -37,7 +37,7 @@
               </p>
               <p style="margin:0;font-size:16px;line-height:1.6;color:#374151;">
                 Le adjuntamos los detalles de su
-                <strong>{{ document_label|lower }} <span style="color:#0d6efd;">{{ invoice.invoice_number }}</span></strong>
+                <strong>{{ document_label|lower }} <span style="color:#0d6efd;">{{ invoice.number }}</span></strong>
                 con fecha <strong>{{ invoice.issue_date|date:"d/m/Y" }}</strong>.
               </p>
             </td>
@@ -49,7 +49,7 @@
                 <tr>
                   <td style="padding:12px 16px;width:33%;vertical-align:top;">
                     <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;font-weight:600;">Número</div>
-                    <div style="font-size:15px;color:#111827;font-weight:600;margin-top:2px;">{{ invoice.invoice_number }}</div>
+                    <div style="font-size:15px;color:#111827;font-weight:600;margin-top:2px;">{{ invoice.number }}</div>
                   </td>
                   <td style="padding:12px 16px;width:33%;vertical-align:top;border-left:1px solid #e5e7eb;">
                     <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;font-weight:600;">Emisión</div>
@@ -77,13 +77,13 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for line in invoice.lines.all %}
+                  {% for item in invoice.items.all %}
                     <tr style="background-color:{% if forloop.counter0|divisibleby:2 %}#ffffff{% else %}#f9fafb{% endif %};">
-                      <td style="padding:12px 14px;border-bottom:1px solid #e5e7eb;color:#1f2937;">{{ line.description }}</td>
-                      <td align="center" style="padding:12px 14px;border-bottom:1px solid #e5e7eb;color:#374151;">{{ line.quantity }}</td>
-                      <td align="right" style="padding:12px 14px;border-bottom:1px solid #e5e7eb;color:#374151;">{{ line.unit_price }} €</td>
-                      <td align="right" style="padding:12px 14px;border-bottom:1px solid #e5e7eb;color:#374151;">{{ line.tax_percentage }}%</td>
-                      <td align="right" style="padding:12px 14px;border-bottom:1px solid #e5e7eb;color:#111827;font-weight:600;">{{ line.line_total }} €</td>
+                      <td style="padding:12px 14px;border-bottom:1px solid #e5e7eb;color:#1f2937;">{{ item.product_name }}</td>
+                      <td align="center" style="padding:12px 14px;border-bottom:1px solid #e5e7eb;color:#374151;">{{ item.quantity }}</td>
+                      <td align="right" style="padding:12px 14px;border-bottom:1px solid #e5e7eb;color:#374151;">{{ item.unit_price }} €</td>
+                      <td align="right" style="padding:12px 14px;border-bottom:1px solid #e5e7eb;color:#374151;">{{ item.product.tax.percentage }}%</td>
+                      <td align="right" style="padding:12px 14px;border-bottom:1px solid #e5e7eb;color:#111827;font-weight:600;">{{ item.subtotal }} €</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -100,7 +100,7 @@
                 </tr>
                 <tr>
                   <td style="padding:8px 0;font-size:15px;color:#6b7280;">Impuestos</td>
-                  <td align="right" style="padding:8px 0;font-size:15px;color:#1f2937;">{{ invoice.tax_total }} €</td>
+                  <td align="right" style="padding:8px 0;font-size:15px;color:#1f2937;">{{ invoice.tax_amount }} €</td>
                 </tr>
                 <tr>
                   <td colspan="2" style="padding:8px 0 0 0;"><div style="border-top:1px solid #e5e7eb;"></div></td>

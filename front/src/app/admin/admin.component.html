@@ -21,7 +21,7 @@
 
     <mat-nav-list>
 
-      @if (authService.currentUser()?.is_staff) {
+      @if (authService.currentUser()?.is_admin) {
       <mat-list-item [routerLink]="'/admin/settings'" (click)="sidenav.toggle()" routerLinkActive="selected">
         <mat-icon matListItemIcon>settings</mat-icon>
         Ajustes

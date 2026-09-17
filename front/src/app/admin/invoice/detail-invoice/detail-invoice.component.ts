@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MaterialModule } from '../../shared/material/material.module';
 import { InvoicesService } from '../../../services/invoices.service';
-import { Invoice } from '../../../models/invoice';
+import { Invoice, InvoiceDocumentType } from '../../../models/invoice';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -17,16 +17,36 @@ export class DetailInvoiceComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
 
   invoice = signal<Invoice | null>(null);
-  isBudget = computed(() => this.invoice()?.document_type === 'BUDGET');
+  isQuote = computed(() => this.invoice()?.document_type === InvoiceDocumentType.QUOTE);
   sending = signal(false);
+  issuing = signal(false);
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!Number.isNaN(id)) {
-      this.invoicesService.getById(id).subscribe((res) => {
-        this.invoice.set(res ?? null);
+      this.invoicesService.getById(id).subscribe({
+        next: (res) => this.invoice.set(res ?? null),
+        error: () => this.snackBar.open('No se pudo cargar el documento.', 'Cerrar', { duration: 3000 }),
       });
     }
+  }
+
+  issueAsInvoice() {
+    const current = this.invoice();
+    if (!current) return;
+
+    this.issuing.set(true);
+    this.invoicesService.issue(current.id).subscribe({
+      next: (updated) => {
+        this.invoice.set(updated);
+        this.issuing.set(false);
+        this.snackBar.open(`Convertido a factura ${updated.number}.`, 'Cerrar', { duration: 3000 });
+      },
+      error: () => {
+        this.issuing.set(false);
+        this.snackBar.open('No se pudo convertir a factura.', 'Cerrar', { duration: 3000 });
+      },
+    });
   }
 
   sendByEmail() {
@@ -56,7 +76,7 @@ export class DetailInvoiceComponent implements OnInit {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${current.invoice_number}.pdf`;
+        a.download = `${current.number}.pdf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -8,16 +8,21 @@ import { ProductsService } from '../../../services/products.service';
 import { AuthService } from '../../../services/auth.service';
 import { BillingService, InvoiceLineItem } from '../../../services/billing.service';
 import { InvoicesService } from '../../../services/invoices.service';
+import { TaxesService } from '../../../services/taxes.service';
 import { Product } from '../../../models/product';
 import { Client } from '../../../models/client';
+import { Tax } from '../../../models/tax';
+import { FormsModule } from '@angular/forms';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-edit-invoice',
-  imports: [MaterialModule, RouterLink],
+  imports: [MaterialModule, RouterLink, FormsModule],
   templateUrl: './edit-invoice.component.html',
   styles: ``,
 })
-export class EditInvoiceComponent implements OnInit {
+export class EditInvoiceComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private toast = inject(HotToastService);
@@ -25,8 +30,12 @@ export class EditInvoiceComponent implements OnInit {
   private productService = inject(ProductsService);
   billingService = inject(BillingService);
   private invoicesService = inject(InvoicesService);
+  private taxesService = inject(TaxesService);
+  private searchInput$ = new Subject<string>();
+  private searchSub?: Subscription;
 
   invoiceId = signal<number | null>(null);
+  invoiceNumber = signal<string>('');
   customers = signal<Client[]>([]);
   showDropdown = signal(false);
   searchInput = signal<string>('');
@@ -34,60 +43,121 @@ export class EditInvoiceComponent implements OnInit {
   selectedCustomer = signal<Client | null>(null);
   invoiceProduct = signal<InvoiceLineItem[]>([]);
   notes = signal<string>('');
+  taxes = signal<Tax[]>([]);
+  selectedTaxId = signal<number | null>(null);
+  dueDate = signal<string | null>(null);
+  selectedTaxRate = computed(() => {
+    const id = this.selectedTaxId();
+    if (id == null) return 0;
+    return this.taxes().find((t) => t.id === id)?.percentage ?? 0;
+  });
   subtotal = computed(() => this.billingService.subtotal(this.invoiceProduct()));
-  taxTotal = computed(() => this.billingService.taxTotal(this.invoiceProduct()));
-  total = computed(() => this.billingService.total(this.invoiceProduct()));
-  canSave = computed(() => !!this.selectedCustomer() && this.invoiceProduct().length > 0);
+  taxTotal = computed(() => this.billingService.taxTotal(this.invoiceProduct(), this.selectedTaxRate()));
+  total = computed(() => this.billingService.total(this.invoiceProduct(), this.selectedTaxRate()));
+  canSave = computed(
+    () => !!this.selectedCustomer() && this.invoiceProduct().length > 0 && this.selectedTaxId() !== null,
+  );
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!Number.isNaN(id)) {
       this.invoiceId.set(id);
+      this.loadTaxes();
       this.loadInvoice(id);
     }
+
+    this.searchSub = this.searchInput$
+      .pipe(debounceTime(250), distinctUntilChanged())
+      .subscribe((term) => this.runProductSearch(term));
+
+    this.loadAllProducts();
+  }
+
+  ngOnDestroy(): void {
+    this.searchSub?.unsubscribe();
+  }
+
+  loadTaxes() {
+    this.taxesService.getAll().subscribe({
+      next: (res) => this.taxes.set(res),
+      error: () => this.toast.error('No se pudieron cargar los impuestos.'),
+    });
+  }
+
+  taxLabel(tax: Tax) {
+    return `${tax.name} (${tax.percentage}%)`;
   }
 
   loadInvoice(id: number) {
-    this.invoicesService.getById(id).subscribe((invoice) => {
-      this.selectedCustomer.set({
-        id: invoice.customer,
-        customer_type: 'COMPANY',
-        billing_name: invoice.customer_name,
-        tax_id: invoice.customer_tax_id,
-        address: '',
-        city: '',
-        province: '',
-        postal_code: null,
-        contact_email: '',
-        phone: null,
-        user: null,
-      });
-      this.searchInput.set(invoice.customer_name);
-      this.notes.set(invoice.notes ?? '');
-      this.invoiceProduct.set(
-        invoice.lines.map((line) => ({
-          id: line.product ?? line.id,
-          sku: '',
-          name: line.product_name || line.description,
-          description: line.description,
-          is_active: true,
-          sale_price: line.unit_price,
-          cost_price: 0,
-          tax: { name: 'IVA', percentage: line.tax_percentage, is_active: true },
-          category: { name: '', is_active: true },
-          quantity: line.quantity,
-        })),
-      );
+    this.invoicesService.getById(id).subscribe({
+      next: (invoice) => {
+        this.invoiceNumber.set(invoice.number);
+        this.notes.set(invoice.notes ?? '');
+        this.dueDate.set(invoice.due_date ?? null);
+        this.selectedTaxId.set(null);
+        this.selectedCustomer.set({
+          id: invoice.customer ?? 0,
+          customer_type: 'COMPANY',
+          billing_name: invoice.customer_name,
+          tax_id: invoice.customer_tax_id,
+          address: '',
+          city: '',
+          province: '',
+          postal_code: null,
+          contact_email: '',
+          phone: null,
+          user: null,
+        });
+        this.searchInput.set(invoice.customer_name);
+        this.invoiceProduct.set(
+          invoice.items.map((item) => ({
+            id: item.product ?? item.id,
+            sku: '',
+            name: item.product_name || '',
+            description: '',
+            is_active: true,
+            sale_price: item.unit_price,
+            cost_price: 0,
+            tax: { name: 'IVA', percentage: 0, is_active: true },
+            category: { name: '', is_active: true },
+            quantity: item.quantity,
+          })),
+        );
+
+        const firstTax = this.taxes()[0];
+        if (firstTax && firstTax.id != null) {
+          this.selectedTaxId.set(firstTax.id);
+        }
+      },
+      error: () => this.toast.error('No se pudo cargar el presupuesto.'),
     });
   }
 
   onSearch(query: string) {
-    if (!query.trim()) {
-      this.products.set([]);
+    this.searchInput$.next(query ?? '');
+  }
+
+  displayProduct = (product: Product | null | undefined): string => {
+    if (!product) return '';
+    return product.sku ? `${product.sku} — ${product.name}` : product.name ?? '';
+  };
+
+  private loadAllProducts() {
+    this.productService.searchProducts('').subscribe({
+      next: (res) => this.products.set(res ?? []),
+      error: () => this.products.set([]),
+    });
+  }
+
+  private runProductSearch(query: string) {
+    const term = query.trim();
+    if (!term) {
+      this.loadAllProducts();
       return;
     }
-    this.productService.searchProducts(query).subscribe((res) => {
-      this.products.set(res);
+    this.productService.searchProducts(term).subscribe({
+      next: (res) => this.products.set(res ?? []),
+      error: () => this.products.set([]),
     });
   }
 
@@ -147,21 +217,21 @@ export class EditInvoiceComponent implements OnInit {
 
   saveInvoice() {
     const invoiceId = this.invoiceId();
-    if (!this.canSave() || !invoiceId) {
-      this.toast.warning('Selecciona un cliente y añade al menos un producto.');
+    if (!this.canSave() || !invoiceId || this.selectedTaxId() == null) {
+      this.toast.warning('Selecciona un cliente, un impuesto y añade al menos un producto.');
       return;
     }
 
     const customer = this.selectedCustomer()!;
     const items = this.invoiceProduct();
+    const taxId = this.selectedTaxId()!;
 
-    this.invoicesService.updateBudget(invoiceId, customer, items, {
-      subtotal: this.subtotal(),
-      taxTotal: this.taxTotal(),
-      total: this.total(),
-    }, this.notes()).subscribe((invoice) => {
-      this.toast.success('Presupuesto actualizado correctamente');
-      this.router.navigate(['/admin/invoice/detailinvoice', invoice.id]);
+    this.invoicesService.updateQuote(invoiceId, customer, items, taxId, this.notes(), this.dueDate()).subscribe({
+      next: (invoice) => {
+        this.toast.success('Presupuesto actualizado correctamente');
+        this.router.navigate(['/admin/invoice/detailinvoice', invoice.id]);
+      },
+      error: () => this.toast.error('No se pudo actualizar el presupuesto.'),
     });
   }
 }

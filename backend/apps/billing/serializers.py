@@ -1,8 +1,9 @@
 from rest_framework import serializers
 
-from apps.accounts.models import CustomerUser
-from apps.billing.models import Supplier, Invoice, InvoiceLine, PaymentMethod
+from apps.accounts.models import Customer
+from apps.billing.models import Supplier, Invoice, InvoiceItem, PaymentMethod
 from apps.catalogs.models import Product
+from apps.core.models import Company, Tax
 
 
 class SupplierSerializer(serializers.ModelSerializer):
@@ -18,76 +19,101 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 
-class InvoiceLineSerializer(serializers.ModelSerializer):
+class InvoiceItemSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), required=False, allow_null=True)
     product_name = serializers.CharField(source='product.name', read_only=True)
 
     class Meta:
-        model = InvoiceLine
+        model = InvoiceItem
         fields = [
             'id',
             'product',
             'product_name',
-            'description',
             'quantity',
             'unit_price',
-            'tax_percentage',
-            'line_subtotal',
-            'tax_amount',
-            'line_total',
+            'discount',
+            'subtotal',
         ]
-        read_only_fields = ['line_subtotal', 'tax_amount', 'line_total']
+        read_only_fields = ['subtotal']
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
-    customer = serializers.PrimaryKeyRelatedField(queryset=CustomerUser.objects.all())
+    customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all())
     customer_name = serializers.CharField(source='customer.billing_name', read_only=True)
     customer_tax_id = serializers.CharField(source='customer.tax_id', read_only=True)
-    lines = InvoiceLineSerializer(many=True, required=False)
+    tax = serializers.PrimaryKeyRelatedField(queryset=Tax.objects.all())
+    company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False, allow_null=True)
+    seller_name = serializers.CharField(source='seller.username', read_only=True)
+    items = InvoiceItemSerializer(many=True, required=False)
 
     class Meta:
         model = Invoice
         fields = [
             'id',
-            'invoice_number',
+            'number',
             'document_type',
-            'document_sequence',
             'customer',
             'customer_name',
             'customer_tax_id',
+            'seller',
+            'seller_name',
+            'company',
+            'tax',
             'issue_date',
             'due_date',
             'status',
             'notes',
             'subtotal',
-            'tax_total',
+            'tax_amount',
             'total',
-            'lines',
+            'items',
         ]
-        read_only_fields = ['id', 'invoice_number', 'document_sequence', 'subtotal', 'tax_total', 'total']
+        read_only_fields = [
+            'id',
+            'number',
+            'subtotal',
+            'tax_amount',
+            'total',
+            'document_type',
+            'seller',
+        ]
 
     def create(self, validated_data):
-        lines_data = validated_data.pop('lines', [])
+        items_data = validated_data.pop('items', [])
+
+        request = self.context.get('request')
+        if request and request.user and request.user.is_authenticated:
+            validated_data['seller'] = request.user
+        else:
+            validated_data.setdefault('seller', request.user if request else None)
+
+        if not validated_data.get('company'):
+            company = Company.objects.first()
+            if company:
+                validated_data['company'] = company
+
         invoice = Invoice.objects.create(**validated_data)
 
-        for line_data in lines_data:
-            InvoiceLine.objects.create(invoice=invoice, **line_data)
+        for item_data in items_data:
+            InvoiceItem.objects.create(invoice=invoice, **item_data)
 
-        invoice.recalculate_totals()
+        invoice.update_totals()
         return invoice
 
     def update(self, instance, validated_data):
-        lines_data = validated_data.pop('lines', None)
+        items_data = validated_data.pop('items', None)
+
+        validated_data.pop('document_type', None)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
         instance.save()
 
-        if lines_data is not None:
-            instance.lines.all().delete()
-            for line_data in lines_data:
-                InvoiceLine.objects.create(invoice=instance, **line_data)
-            instance.recalculate_totals()
+        if items_data is not None:
+            instance.items.all().delete()
+            for item_data in items_data:
+                InvoiceItem.objects.create(invoice=instance, **item_data)
+            instance.update_totals()
 
         return instance

@@ -49,7 +49,7 @@
     <td style="width: 45%; vertical-align: top; text-align: right;">
       <div class="doc-title">{{ document_label|upper }}</div>
       <div class="doc-meta">
-        <span class="doc-number">{{ invoice.invoice_number }}</span><br>
+        <span class="doc-number">{{ invoice.number }}</span><br>
         Emisión: {{ invoice.issue_date|date:"d/m/Y" }}<br>
         {% if invoice.due_date %}Vencimiento: {{ invoice.due_date|date:"d/m/Y" }}{% endif %}
       </div>
@@ -80,13 +80,13 @@
     </tr>
   </thead>
   <tbody>
-    {% for line in invoice.lines.all %}
+    {% for item in invoice.items.all %}
       <tr class="{% if forloop.counter0|divisibleby:2 %}alt{% endif %}">
-        <td>{{ line.description }}</td>
-        <td class="text-center">{{ line.quantity }}</td>
-        <td class="text-right">{{ line.unit_price }} €</td>
-        <td class="text-right">{{ line.tax_percentage }}%</td>
-        <td class="text-right">{{ line.line_total }} €</td>
+        <td>{{ item.product_name }}</td>
+        <td class="text-center">{{ item.quantity }}</td>
+        <td class="text-right">{{ item.unit_price }} €</td>
+        <td class="text-right">{{ item.product.tax.percentage }}%</td>
+        <td class="text-right">{{ item.subtotal }} €</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -99,7 +99,7 @@
   </tr>
   <tr>
     <td class="label">Impuestos:</td>
-    <td class="value">{{ invoice.tax_total }} €</td>
+    <td class="value">{{ invoice.tax_amount }} €</td>
   </tr>
   <tr class="total-row">
     <td>Total:</td>

@@ -12,11 +12,7 @@ class CustomerSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
 
     class Meta:
-<<<<<<< HEAD
         model = Customer
-        fields = "__all__"
-=======
-        model = CustomerUser
         fields = [
             'id',
             'customer_type',
@@ -30,4 +26,3 @@ class CustomerSerializer(serializers.ModelSerializer):
             'phone',
             'user',
         ]
->>>>>>> develop

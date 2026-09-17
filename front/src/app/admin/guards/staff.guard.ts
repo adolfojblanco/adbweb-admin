@@ -10,14 +10,14 @@ export const staffGuard: CanActivateFn = () => {
   const toast = inject(HotToastService);
 
   const user = authService.currentUser();
-  if (user?.is_staff) {
+  if (user?.is_admin) {
     return true;
   }
 
   return authService.getAuthUser().pipe(
     take(1),
     map((loaded) => {
-      if (loaded?.is_staff) {
+      if (loaded?.is_admin) {
         return true;
       }
       toast.error('No tienes permisos para acceder a esta sección.');

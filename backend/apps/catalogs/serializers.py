@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
-from .models import Tax, Product, Category
+from apps.core.models import Tax
+
+from .models import Product, Category
 
 
 class CategorySerializer(serializers.ModelSerializer):

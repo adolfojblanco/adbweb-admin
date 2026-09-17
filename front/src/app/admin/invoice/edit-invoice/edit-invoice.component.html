@@ -5,6 +5,7 @@
         <h3 class="card-title mb-1">Editar Presupuesto</h3>
         <small class="text-muted">Actualiza cliente, productos y totales</small>
       </div>
+      <span class="badge bg-secondary">{{ invoiceNumber() || 'PRE-BORRADOR' }}</span>
     </div>
 
     <div class="row g-3 mb-4">
@@ -43,16 +44,55 @@
       </div>
     </div>
 
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Impuesto</mat-label>
+          <mat-icon matPrefix>percent</mat-icon>
+          <mat-select [(ngModel)]="selectedTaxId" [compareWith]="(a, b) => a === b">
+            @for (tax of taxes(); track tax.id) {
+              <mat-option [value]="tax.id">{{ taxLabel(tax) }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Fecha de vencimiento (opcional)</mat-label>
+          <input
+            matInput
+            type="date"
+            [value]="dueDate() ?? ''"
+            (change)="dueDate.set(txtDueDate.value || null)"
+            #txtDueDate
+          />
+        </mat-form-field>
+      </div>
+    </div>
+
     <h5 class="mb-3 text-primary">Detalle de productos</h5>
 
     <div class="p-3 rounded border bg-light mb-4">
       <mat-form-field appearance="outline" class="w-100 mb-0">
         <mat-label>Buscar producto por código, SKU o nombre</mat-label>
         <mat-icon matPrefix>qr_code_scanner</mat-icon>
-        <input matInput placeholder="Ej. Camiseta o SKU-001" (keyup.enter)="onSearch(productSearch.value)" #productSearch [matAutocomplete]="auto" />
-        <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption (optionSelected)="selectedProduct($event, productSearch)">
+        <input
+          matInput
+          placeholder="Ej. Camiseta o SKU-001"
+          (input)="onSearch(productSearch.value)"
+          (keyup.enter)="onSearch(productSearch.value); $event.preventDefault()"
+          #productSearch
+          [matAutocomplete]="auto"
+        />
+        <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption (optionSelected)="selectedProduct($event, productSearch)" [displayWith]="displayProduct">
           @for (product of products(); track product.id) {
-            <mat-option [value]="product">{{ product.name }}</mat-option>
+            <mat-option [value]="product">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge text-bg-secondary">{{ product.sku }}</span>
+                <span>{{ product.name }}</span>
+              </div>
+            </mat-option>
           }
         </mat-autocomplete>
       </mat-form-field>
@@ -105,7 +145,7 @@
           <strong>{{ subtotal() | number:'1.2-2' }}</strong>
         </div>
         <div class="d-flex justify-content-between mb-2">
-          <span>Impuestos</span>
+          <span>Impuestos ({{ selectedTaxRate() }}%)</span>
           <strong>{{ taxTotal() | number:'1.2-2' }}</strong>
         </div>
         <hr>

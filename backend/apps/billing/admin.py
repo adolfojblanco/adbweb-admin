@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.utils.safestring import mark_safe
 
-from apps.billing.models import Invoice, InvoiceLine, Supplier, PaymentMethod
+from apps.billing.models import Invoice, InvoiceItem, Supplier, PaymentMethod
 
 
 @admin.register(Supplier)
@@ -20,10 +20,10 @@ class PaymentMethodAdmin(admin.ModelAdmin):
 
 
 class InvoiceLineInline(admin.TabularInline):
-    model = InvoiceLine
+    model = InvoiceItem
     extra = 1
     autocomplete_fields = ('product',)
-    readonly_fields = ('line_subtotal', 'tax_amount', 'line_total')
+    readonly_fields = ('subtotal',)
 
 
 class DocumentTypeFilter(admin.SimpleListFilter):
@@ -32,7 +32,7 @@ class DocumentTypeFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ('BUDGET', 'Presupuestos'),
+            ('QUOTE', 'Presupuestos'),
             ('INVOICE', 'Facturas'),
         )
 
@@ -45,21 +45,21 @@ class DocumentTypeFilter(admin.SimpleListFilter):
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
     change_form_template = 'admin/billing/invoice/change_form.html'
-    list_display = ('invoice_number', 'document_type_badge', 'customer', 'issue_date', 'due_date', 'status', 'total')
+    list_display = ('number', 'document_type_badge', 'customer', 'issue_date', 'due_date', 'status', 'total')
     list_filter = (DocumentTypeFilter, 'status', 'issue_date')
-    search_fields = ('invoice_number', 'customer__billing_name', 'customer__tax_id', 'customer__contact_email')
+    search_fields = ('number', 'customer__billing_name', 'customer__tax_id', 'customer__contact_email')
     autocomplete_fields = ('customer',)
-    readonly_fields = ('invoice_number', 'document_sequence', 'subtotal', 'tax_total', 'total', 'created_at', 'updated_at')
+    readonly_fields = ('number', 'subtotal', 'tax_amount', 'total', 'created_at', 'updated_at')
     inlines = [InvoiceLineInline]
     ordering = ('-issue_date', '-id')
     actions = ['convert_selected_to_invoice']
 
     fieldsets = (
         ('Datos de factura', {
-            'fields': ('invoice_number', 'document_type', 'document_sequence', 'customer', 'issue_date', 'due_date', 'status', 'notes')
+            'fields': ('number', 'document_type', 'customer', 'issue_date', 'due_date', 'status', 'notes')
         }),
         ('Totales', {
-            'fields': ('subtotal', 'tax_total', 'total')
+            'fields': ('subtotal', 'tax_amount', 'total')
         }),
         ('Auditoría', {
             'fields': ('created_at', 'updated_at')
@@ -68,7 +68,7 @@ class InvoiceAdmin(admin.ModelAdmin):
 
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
-        form.instance.recalculate_totals()
+        form.instance.update_totals()
 
     @admin.display(description='Tipo', ordering='document_type')
     def document_type_badge(self, obj):
@@ -88,6 +88,7 @@ class InvoiceAdmin(admin.ModelAdmin):
         for invoice in queryset:
             if invoice.document_type != invoice.DocumentType.INVOICE:
                 invoice.document_type = invoice.DocumentType.INVOICE
+                invoice.updated_by = request.user
                 invoice.save()
                 converted += 1
 
@@ -96,6 +97,7 @@ class InvoiceAdmin(admin.ModelAdmin):
     def response_change(self, request, obj):
         if '_convert_to_invoice' in request.POST and obj.document_type != obj.DocumentType.INVOICE:
             obj.document_type = obj.DocumentType.INVOICE
+            obj.updated_by = request.user
             obj.save()
             self.message_user(request, 'Documento convertido a factura correctamente.')
             return HttpResponseRedirect(request.path)

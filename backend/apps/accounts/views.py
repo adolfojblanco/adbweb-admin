@@ -1,13 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-<<<<<<< HEAD
-from rest_framework import generics, filters
 from .models import Customer
-=======
 from rest_framework import generics, filters, status
-from .models import CustomerUser
->>>>>>> develop
 
 from .serializers import UserSerializer, CustomerSerializer
 from apps.core.views import TimeStampedViewSet
@@ -24,7 +19,7 @@ class UserView(APIView):
 
 
 class CustomerViewSet(TimeStampedViewSet):
-    queryset = CustomerUser.objects.all().order_by('billing_name')
+    queryset = Customer.objects.all().order_by('billing_name')
     serializer_class = CustomerSerializer
     lookup_value_regex = r'\d+'
 
@@ -44,11 +39,7 @@ class CustomerViewSet(TimeStampedViewSet):
 
 
 class CustomerSearchView(generics.ListAPIView):
-<<<<<<< HEAD
     queryset = Customer.objects.all()
-=======
-    queryset = CustomerUser.objects.all().order_by('billing_name')
->>>>>>> develop
     serializer_class = CustomerSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['billing_name', 'tax_id', 'contact_email']

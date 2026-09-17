@@ -1,10 +1,10 @@
 from django.db import models
 from django.db.models import Sum
 
-from apps.company.models import Company
-from apps.accounts.models import CustomerUser
-from apps.catalogs.models import Tax, Product
-from apps.core.models import TimeStampedModel
+from apps.core.models import Company
+from apps.accounts.models import Customer
+from apps.catalogs.models import Product
+from apps.core.models import Tax, TimeStampedModel
 from django.conf import settings
 from django.utils import timezone
 from decimal import Decimal
@@ -67,12 +67,12 @@ class Invoice(TimeStampedModel):
     document_type = models.CharField(max_length=10, choices=DocumentType.choices, default=DocumentType.QUOTE)
     number = models.CharField(max_length=20, unique=True, blank=True, null=True, verbose_name="# Factura")
     issue_date = models.DateField(default=timezone.now, verbose_name="Fecha de Factura")
-    due_date = models.DateField(auto_now=False, verbose_name="Fecha de Pago")
+    due_date = models.DateField(null=True, blank=True, verbose_name="Fecha de Pago")
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.DRAFT)
     notes = models.TextField(blank=True, help_text="Términos y condiciones o notas para el cliente")
 
     # Relaciones
-    customer = models.ForeignKey(CustomerUser, on_delete=models.RESTRICT, related_name='invoices')
+    customer = models.ForeignKey(Customer, on_delete=models.RESTRICT, related_name='invoices')
     seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT, related_name='sales')
     company = models.ForeignKey(
         Company,
@@ -166,7 +166,7 @@ class InvoiceItem(TimeStampedModel):
     def save(self, *args, **kwargs):
         if not self.pk:
             if not self.unit_price:
-                self.unit_price = self.product.price
+                self.unit_price = self.product.sale_price
             if not self.product_name:
                 self.product_name = self.product.name
 
@@ -175,17 +175,17 @@ class InvoiceItem(TimeStampedModel):
 
         line_total = (self.unit_price * Decimal(self.quantity)) - self.discount
         self.subtotal = max(Decimal('0.00'), line_total)
-        
+
         super().save(*args, **kwargs)
 
 
-    @receiver(post_save, sender='billing.InvoiceItem')
-    @receiver(post_delete, sender='billing.InvoiceItem')
-    def update_invoice_totals_on_item_change(sender, instance, **kwargs):
-        """
-        Escucha la base de datos: Si alguien crea, edita o borra una línea de detalle (InvoiceItem),
-        le avisa a la Factura (Invoice) que debe volver a hacer sus matemáticas.
-        """
-        if instance.invoice:
-            instance.invoice.update_totals()
+@receiver(post_save, sender='billing.InvoiceItem')
+@receiver(post_delete, sender='billing.InvoiceItem')
+def update_invoice_totals_on_item_change(sender, instance, **kwargs):
+    """
+    Escucha la base de datos: Si alguien crea, edita o borra una línea de detalle (InvoiceItem),
+    le avisa a la Factura (Invoice) que debe volver a hacer sus matemáticas.
+    """
+    if instance.invoice:
+        instance.invoice.update_totals()
 

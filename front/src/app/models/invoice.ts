@@ -1,32 +1,30 @@
 export enum InvoiceDocumentType {
-  BUDGET = 'BUDGET',
+  QUOTE = 'QUOTE',
   INVOICE = 'INVOICE',
 }
 
 export enum InvoiceStatus {
   DRAFT = 'DRAFT',
   ISSUED = 'ISSUED',
+  ACCEPTED = 'ACCEPTED',
   PAID = 'PAID',
   CANCELLED = 'CANCELLED',
 }
 
-export interface InvoiceLine {
+export interface InvoiceItem {
   id: number;
   product?: number | null;
   product_name?: string;
-  description: string;
   quantity: number;
   unit_price: number;
-  tax_percentage: number;
-  line_subtotal: number;
-  tax_amount: number;
-  line_total: number;
+  discount: number;
+  subtotal: number;
 }
 
 export interface Invoice {
   id: number;
   customer?: number;
-  invoice_number: string;
+  number: string;
   document_type: InvoiceDocumentType;
   customer_name: string;
   customer_tax_id: string;
@@ -34,8 +32,8 @@ export interface Invoice {
   due_date?: string | null;
   status: InvoiceStatus;
   subtotal: number;
-  tax_total: number;
+  tax_amount: number;
   total: number;
   notes?: string;
-  lines: InvoiceLine[];
+  items: InvoiceItem[];
 }

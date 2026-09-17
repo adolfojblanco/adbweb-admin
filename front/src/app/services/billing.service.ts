@@ -18,14 +18,17 @@ export class BillingService {
     return items.reduce((total, item) => total + this.lineSubtotal(item), 0);
   }
 
-  taxTotal(items: InvoiceLineItem[]): number {
+  taxTotal(items: InvoiceLineItem[], taxRate?: number): number {
+    if (taxRate !== undefined && taxRate !== null) {
+      return (this.subtotal(items) * taxRate) / 100;
+    }
     return items.reduce((total, item) => {
-      const taxRate = item.tax?.percentage ?? 0;
-      return total + (this.lineSubtotal(item) * taxRate) / 100;
+      const itemRate = item.tax?.percentage ?? 0;
+      return total + (this.lineSubtotal(item) * itemRate) / 100;
     }, 0);
   }
 
-  total(items: InvoiceLineItem[]): number {
-    return this.subtotal(items) + this.taxTotal(items);
+  total(items: InvoiceLineItem[], taxRate?: number): number {
+    return this.subtotal(items) + this.taxTotal(items, taxRate);
   }
 }

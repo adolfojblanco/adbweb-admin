@@ -9,7 +9,7 @@ import { Product } from '../models/product';
 })
 export class ProductsService {
 
-  private readonly urlEndPoint: string = `${environment.apiUrl}/products`;
+  private readonly urlEndPoint: string = `${environment.apiUrl.replace(/\/$/, '')}/products`;
   private http = inject(HttpClient);
 
 
@@ -18,7 +18,7 @@ export class ProductsService {
   }
 
   searchProducts(searchTerm: string = '') {
-    return this.http.get<Product[]>(`${this.urlEndPoint}/?search=${searchTerm}`);
+    return this.http.get<Product[]>(`${this.urlEndPoint}/?search=${encodeURIComponent(searchTerm)}`);
   }
 
   newProduct(product: Product) {

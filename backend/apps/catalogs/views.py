@@ -3,7 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from apps.catalogs.models import Category, Tax, Product
+from apps.catalogs.models import Category, Product
+from apps.core.models import Tax
 from .serializers import CategorySerializer, TaxSerializer, ProductSerializer
 from apps.core.permissions import IsAdminUser
 
@@ -34,7 +35,7 @@ class TaxViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all().order_by("name")
     serializer_class = ProductSerializer
-    search_fields = ["name"]
-    ordering_fields = ["name"]
+    search_fields = ["name", "sku", "description"]
+    ordering_fields = ["name", "sale_price"]
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]

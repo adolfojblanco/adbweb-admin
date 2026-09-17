@@ -2,10 +2,10 @@
   <div class="card-body">
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
       <div>
-        <h3 class="card-title mb-1">Nueva Factura</h3>
-        <small class="text-muted">Factura en borrador</small>
+        <h3 class="card-title mb-1">Nuevo Presupuesto</h3>
+        <small class="text-muted">Presupuesto en borrador</small>
       </div>
-      <span class="badge bg-secondary">#INV-0001</span>
+      <span class="badge bg-secondary">PRE-BORRADOR</span>
     </div>
 
     <div class="row g-3 mb-4">
@@ -50,6 +50,33 @@
       </div>
     </div>
 
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Impuesto</mat-label>
+          <mat-icon matPrefix>percent</mat-icon>
+          <mat-select [(ngModel)]="selectedTaxId" [compareWith]="(a, b) => a === b">
+            @for (tax of taxes(); track tax.id) {
+              <mat-option [value]="tax.id">{{ taxLabel(tax) }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Fecha de vencimiento (opcional)</mat-label>
+          <input
+            matInput
+            type="date"
+            [value]="dueDate() ?? ''"
+            (change)="dueDate.set(txtDueDate.value || null)"
+            #txtDueDate
+          />
+        </mat-form-field>
+      </div>
+    </div>
+
     <h5 class="mb-3 text-primary">Detalle de productos</h5>
 
     <div class="p-3 rounded border bg-light mb-4">
@@ -59,14 +86,20 @@
         <input
           matInput
           placeholder="Ej. Camiseta o SKU-001"
-          (keyup.enter)="onSearch(productSearch.value)"
+          (input)="onSearch(productSearch.value)"
+          (keyup.enter)="onSearch(productSearch.value); $event.preventDefault()"
           #productSearch
           [matAutocomplete]="auto"
         />
 
-        <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption (optionSelected)="selectedProduct($event, productSearch)">
+        <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption (optionSelected)="selectedProduct($event, productSearch)" [displayWith]="displayProduct">
           @for (product of products(); track product.id) {
-            <mat-option [value]="product">{{ product.name }}</mat-option>
+            <mat-option [value]="product">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge text-bg-secondary">{{ product.sku }}</span>
+                <span>{{ product.name }}</span>
+              </div>
+            </mat-option>
           }
         </mat-autocomplete>
       </mat-form-field>
@@ -88,7 +121,7 @@
         <tbody>
           @if (invoiceProduct().length === 0) {
             <tr>
-              <td colspan="6" class="text-center text-muted py-4">Agrega productos para construir la factura.</td>
+              <td colspan="6" class="text-center text-muted py-4">Agrega productos para construir el presupuesto.</td>
             </tr>
           }
 
@@ -127,7 +160,7 @@
           <strong>{{ subtotal() | number:'1.2-2' }}</strong>
         </div>
         <div class="d-flex justify-content-between mb-2">
-          <span>Impuestos</span>
+          <span>Impuestos ({{ selectedTaxRate() }}%)</span>
           <strong>{{ taxTotal() | number:'1.2-2' }}</strong>
         </div>
         <hr>
@@ -143,7 +176,7 @@
     <button mat-stroked-button type="button" color="warn">Cancelar</button>
     <button mat-raised-button type="button" color="primary" (click)="saveInvoice()" [disabled]="!canSave()">
       <mat-icon>save</mat-icon>
-      Guardar factura
+      Guardar presupuesto
     </button>
   </div>
 </div>

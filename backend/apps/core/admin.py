@@ -14,6 +14,8 @@ class CompanyAdmin(admin.ModelAdmin):
 @admin.register(Tax)
 class TaxAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_active', 'created_by', 'updated_by')
+    list_filter = ('is_active',)
+    search_fields = ('name',)
     readonly_fields = ('created_by', 'updated_by')
 
     def save_model(self, request, obj, form, change):

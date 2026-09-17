@@ -2,12 +2,16 @@
   <div class="card-body">
     <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
       <div>
-        <h3 class="card-title mb-1">{{ invoice()!.invoice_number }}</h3>
+        <h3 class="card-title mb-1">{{ invoice()!.number }}</h3>
         <div class="text-muted">{{ invoice()!.customer_name }} · {{ invoice()!.customer_tax_id }}</div>
       </div>
       <div class="d-flex gap-2 flex-wrap">
-        @if (isBudget()) {
-          <a mat-raised-button color="primary" [routerLink]="['/admin/invoice/editinvoice', invoice()!.id]">Editar presupuesto</a>
+        @if (isQuote()) {
+          <a mat-stroked-button color="primary" [routerLink]="['/admin/invoice/editinvoice', invoice()!.id]">Editar presupuesto</a>
+          <button mat-raised-button color="warn" (click)="issueAsInvoice()" [disabled]="issuing()">
+            <mat-icon>verified</mat-icon>
+            {{ issuing() ? 'Convirtiendo...' : 'Convertir a factura' }}
+          </button>
         }
         <button mat-raised-button color="primary" (click)="downloadPdf()">
           <mat-icon>picture_as_pdf</mat-icon>
@@ -27,7 +31,7 @@
       <div class="col-12 col-md-3">
         <div class="p-3 border rounded bg-light">
           <div class="text-muted small">Tipo</div>
-          <div class="fw-semibold">{{ isBudget() ? 'Presupuesto' : 'Factura' }}</div>
+          <div class="fw-semibold">{{ isQuote() ? 'Presupuesto' : 'Factura' }}</div>
         </div>
       </div>
       <div class="col-12 col-md-3">
@@ -54,23 +58,21 @@
       <table class="table mb-0 align-middle">
         <thead class="table-light">
           <tr>
-            <th>Descripción</th>
+            <th>Producto</th>
             <th class="text-center">Cant.</th>
             <th class="text-end">Precio</th>
-            <th class="text-end">IVA</th>
+            <th class="text-end">Descuento</th>
             <th class="text-end">Subtotal</th>
-            <th class="text-end">Total</th>
           </tr>
         </thead>
         <tbody>
-          @for (line of invoice()!.lines; track line.id) {
+          @for (item of invoice()!.items; track item.id) {
             <tr>
-              <td>{{ line.description }}</td>
-              <td class="text-center">{{ line.quantity }}</td>
-              <td class="text-end">{{ line.unit_price | number:'1.2-2' }}</td>
-              <td class="text-end">{{ line.tax_percentage }}%</td>
-              <td class="text-end">{{ line.line_subtotal | number:'1.2-2' }}</td>
-              <td class="text-end fw-semibold">{{ line.line_total | number:'1.2-2' }}</td>
+              <td>{{ item.product_name }}</td>
+              <td class="text-center">{{ item.quantity }}</td>
+              <td class="text-end">{{ item.unit_price | number:'1.2-2' }}</td>
+              <td class="text-end">{{ item.discount | number:'1.2-2' }}</td>
+              <td class="text-end fw-semibold">{{ item.subtotal | number:'1.2-2' }}</td>
             </tr>
           }
         </tbody>
@@ -85,7 +87,7 @@
         </div>
         <div class="d-flex justify-content-between mb-2">
           <span>Impuestos</span>
-          <strong>{{ invoice()!.tax_total | number:'1.2-2' }}</strong>
+          <strong>{{ invoice()!.tax_amount | number:'1.2-2' }}</strong>
         </div>
         <hr>
         <div class="d-flex justify-content-between fs-5 text-primary">

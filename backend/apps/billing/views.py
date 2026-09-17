@@ -61,14 +61,26 @@ class PaymentMethodViewSet(TimeStampedViewSet):
 
 
 class InvoiceViewSet(TimeStampedViewSet):
-    queryset = Invoice.objects.select_related('customer').prefetch_related('lines', 'lines__product').all().order_by('-issue_date', '-id')
+    queryset = Invoice.objects.select_related('customer').prefetch_related('items', 'items__product').all().order_by('-issue_date', '-id')
     serializer_class = InvoiceSerializer
+
+    @action(detail=True, methods=['post'])
+    def issue(self, request, pk=None):
+        invoice = self.get_object()
+        if invoice.document_type != invoice.DocumentType.INVOICE:
+            invoice.document_type = invoice.DocumentType.INVOICE
+        invoice.status = invoice.Status.ISSUED
+        invoice.updated_by = request.user
+        invoice.save()
+        serializer = self.get_serializer(invoice)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['post'])
     def convert_to_invoice(self, request, pk=None):
         invoice = self.get_object()
         if invoice.document_type != invoice.DocumentType.INVOICE:
             invoice.document_type = invoice.DocumentType.INVOICE
+            invoice.updated_by = request.user
             invoice.save()
         serializer = self.get_serializer(invoice)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -86,6 +98,7 @@ class InvoiceViewSet(TimeStampedViewSet):
             )
 
         invoice.status = new_status
+        invoice.updated_by = request.user
         invoice.save(update_fields=['status', 'updated_at', 'updated_by'])
         serializer = self.get_serializer(invoice)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -115,7 +128,7 @@ class InvoiceViewSet(TimeStampedViewSet):
             'document_label': document_label,
         })
 
-        subject = f'{document_label} {invoice.invoice_number} - {company.name}'
+        subject = f'{document_label} {invoice.number} - {company.name}'
 
         from_email = formataddr((company.name, company.email_company)) if company.email_company else settings.DEFAULT_FROM_EMAIL
 
@@ -139,7 +152,7 @@ class InvoiceViewSet(TimeStampedViewSet):
 
         try:
             pdf_content = generate_invoice_pdf(invoice, company)
-            filename = f'{_document_slug(invoice)}_{invoice.invoice_number}.pdf'
+            filename = f'{_document_slug(invoice)}_{invoice.number}.pdf'
             email.attach(filename, pdf_content, 'application/pdf')
         except Exception as exc:
             return Response(
@@ -173,7 +186,7 @@ class InvoiceViewSet(TimeStampedViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-        filename = f'{_document_slug(invoice)}_{invoice.invoice_number}.pdf'
+        filename = f'{_document_slug(invoice)}_{invoice.number}.pdf'
         response = HttpResponse(pdf_content, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response

@@ -37,7 +37,7 @@ export class NewCustomerComponent {
   }
 
   resetForm() {
-    this.customerForm.
+    
   }
 
 

@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('accounts', '0006_customer_remove_customeruser_user_alter_user_options_and_more'),
-        ('billing', '0019_alter_invoice_customer'),
+        ('billing', '0001_initial'),
         ('catalogs', '0007_delete_contractedservice'),
     ]
 

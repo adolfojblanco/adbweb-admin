@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MaterialModule } from '../../shared/material/material.module';
 import { InvoicesService } from '../../../services/invoices.service';
-import { Invoice, InvoiceStatus } from '../../../models/invoice';
+import { Invoice, InvoiceDocumentType, InvoiceStatus } from '../../../models/invoice';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -16,11 +16,12 @@ export class ListInvoiceComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
 
   invoices = signal<Invoice[]>([]);
-  displayedColumns: string[] = ['invoice_number', 'document_type', 'customer_name', 'issue_date', 'status', 'total', 'actions'];
+  displayedColumns: string[] = ['number', 'document_type', 'customer_name', 'issue_date', 'status', 'total', 'actions'];
 
   readonly statusLabels: Record<InvoiceStatus, string> = {
     [InvoiceStatus.DRAFT]: 'Borrador',
     [InvoiceStatus.ISSUED]: 'Emitida',
+    [InvoiceStatus.ACCEPTED]: 'Aceptada',
     [InvoiceStatus.PAID]: 'Pagada',
     [InvoiceStatus.CANCELLED]: 'Cancelada',
   };
@@ -28,8 +29,14 @@ export class ListInvoiceComponent implements OnInit {
   readonly statusClasses: Record<InvoiceStatus, string> = {
     [InvoiceStatus.DRAFT]: 'bg-secondary',
     [InvoiceStatus.ISSUED]: 'bg-primary',
+    [InvoiceStatus.ACCEPTED]: 'bg-info',
     [InvoiceStatus.PAID]: 'bg-success',
     [InvoiceStatus.CANCELLED]: 'bg-danger',
+  };
+
+  readonly documentTypeLabels: Record<InvoiceDocumentType, string> = {
+    [InvoiceDocumentType.QUOTE]: 'Presupuesto',
+    [InvoiceDocumentType.INVOICE]: 'Factura',
   };
 
   statusLabel(status: string): string {
@@ -40,7 +47,15 @@ export class ListInvoiceComponent implements OnInit {
     return this.statusClasses[status as InvoiceStatus] ?? 'bg-secondary';
   }
 
-  ngOnInit(): void {
+  documentTypeLabel(type: string): string {
+    return this.documentTypeLabels[type as InvoiceDocumentType] ?? type;
+  }
+
+  isQuote(invoice: Invoice): boolean {
+    return invoice.document_type === InvoiceDocumentType.QUOTE;
+  }
+
+  ngOnInit() {
     this.loadInvoices();
   }
 
@@ -51,17 +66,17 @@ export class ListInvoiceComponent implements OnInit {
   }
 
   presentInvoice(invoice: Invoice) {
-    this.invoicesService.setStatus(invoice.id, InvoiceStatus.ISSUED).subscribe({
+    this.invoicesService.issue(invoice.id).subscribe({
       next: (updated) => {
         this.invoices.update((list) =>
           list.map((item) => (item.id === updated.id ? updated : item)),
         );
-        this.snackBar.open(`Factura ${updated.invoice_number} presentada correctamente.`, 'Cerrar', {
+        this.snackBar.open(`Documento ${updated.number} emitido como factura.`, 'Cerrar', {
           duration: 3000,
         });
       },
       error: () => {
-        this.snackBar.open('No se pudo presentar la factura.', 'Cerrar', { duration: 3000 });
+        this.snackBar.open('No se pudo emitir el documento.', 'Cerrar', { duration: 3000 });
       },
     });
   }
